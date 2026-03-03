@@ -1,0 +1,24 @@
+# dbt/dbt_project.yml
+name: "space_pulse"
+version: "1.0.0"
+config-version: 2
+
+# Le decimos que use la conexión que acabamos de definir en profiles.yml
+profile: "space_pulse_clickhouse"
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  space_pulse:
+    staging:
+      materialized: view          # Vistas, no persisten datos (ahorra espacio)
+      schema: staging
+    intermediate:
+      materialized: table         # Tablas reales, se recalculan enteras
+      schema: intermediate
+    marts:
+      materialized: incremental   # Solo añade filas nuevas (muy eficiente)
+      schema: marts
+      unique_key: id

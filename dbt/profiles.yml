@@ -1,0 +1,12 @@
+# dbt/profiles.yml
+space_pulse_clickhouse:
+  target: dev
+  outputs:
+    dev:
+      type: clickhouse
+      schema: space_pulse_dev
+      host: localhost
+      port: 8123
+      user: default
+      password: ""
+      secure: False

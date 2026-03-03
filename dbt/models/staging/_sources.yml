@@ -1,0 +1,11 @@
+# dbt/models/staging/_sources.yml
+version: 2
+
+sources:
+  - name: raw
+    schema: default # La base de datos por defecto
+    tables:
+      - name: neows_raw
+        description: "Datos crudos de Asteroides desde MinIO"
+      - name: donki_flares_raw
+        description: "Datos crudos de Solar Flares desde MinIO"
