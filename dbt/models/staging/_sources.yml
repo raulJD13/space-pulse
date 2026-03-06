@@ -3,9 +3,23 @@ version: 2
 
 sources:
   - name: raw
-    schema: default # La base de datos por defecto
+    schema: space_pulse
     tables:
       - name: neows_raw
-        description: "Datos crudos de Asteroides desde MinIO"
+        description: "Datos crudos de Asteroides"
+        identifier: neo_daily
       - name: donki_flares_raw
-        description: "Datos crudos de Solar Flares desde MinIO"
+        description: "Datos crudos de Solar Flares"
+        identifier: solar_events
+      - name: earth_events_raw
+        description: "Eventos naturales terrestres de EONET"
+        identifier: earth_events
+      - name: mars_weather_raw
+        description: "Datos meteorológicos de Marte (InSight)"
+        identifier: mars_weather
+      - name: satellite_observations_raw
+        description: "Observaciones orbitales de satélites"
+        identifier: satellite_observations
+      - name: apod_raw
+        description: "Astronomy Picture of the Day"
+        identifier: apod
