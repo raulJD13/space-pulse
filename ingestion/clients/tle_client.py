@@ -110,3 +110,19 @@ class TLEClient:
             results.append(params)
 
         return results
+
+    async def get_all_satellite_groups(self) -> List[Dict]:
+        """
+        Obtiene satélites de varios grupos en paralelo: Starlink, ISS y weather sats.
+        """
+        import asyncio
+        starlink, iss, weather = await asyncio.gather(
+            self.get_satellites("starlink", 100),
+            self.get_satellites("ISS", 5),
+            self.get_satellites("weather", 50),
+        )
+        return starlink + iss + weather
+
+    def compute_all_positions(self, satellites: List[Dict]) -> List[Dict]:
+        """Alias de parse_satellites() para compatibilidad."""
+        return self.parse_satellites(satellites)

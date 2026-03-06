@@ -41,6 +41,10 @@ class EPICClient(NASABaseClient):
             f"?api_key={self.api_key}"
         )
 
+    async def get_natural_images(self, date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Alias de get_images() para compatibilidad."""
+        return await self.get_images(date=date)
+
     def flatten_images(self, images: List[Dict]) -> List[Dict]:
         """Extrae campos relevantes de las imágenes EPIC."""
         flat = []
@@ -62,3 +66,7 @@ class EPICClient(NASABaseClient):
                 "dscovr_z": position.get("z"),
             })
         return flat
+
+    def extract_metadata(self, images: List[Dict]) -> List[Dict]:
+        """Alias de flatten_images() para compatibilidad."""
+        return self.flatten_images(images)

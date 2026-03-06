@@ -57,3 +57,11 @@ class APODClient(NASABaseClient):
             "thumbnail_url": apod_data.get("thumbnail_url"),
             "copyright": apod_data.get("copyright"),
         }
+
+    def extract_metadata(self, apod_data: "Dict | List[Dict]") -> List[Dict]:
+        """
+        Normaliza la respuesta APOD en una lista de registros.
+        Acepta tanto un dict (una imagen) como una lista (varias).
+        """
+        items = [apod_data] if isinstance(apod_data, dict) else apod_data
+        return [self.normalize(item) for item in items]

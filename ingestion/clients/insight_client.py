@@ -59,3 +59,10 @@ class InSightClient(NASABaseClient):
             })
 
         return sols
+
+    def parse_sols(self, weather_data: Dict) -> List[Dict]:
+        """
+        Alias de flatten_sols() con resultado ordenado por sol ascendente.
+        Útil cuando se necesita el histórico en orden cronológico.
+        """
+        return sorted(self.flatten_sols(weather_data), key=lambda x: x["sol"])

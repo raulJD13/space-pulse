@@ -83,5 +83,6 @@ class EONETClient:
                 "event_date": event_date,
                 "closed_date": event.get("closed"),
                 "source_url": source_url,
+                "geometry_count": len(geometries),
             })
         return flat
