@@ -25,8 +25,9 @@ def get_alerts(
 
     query = f"""
         SELECT alert_id, alert_type, created_at, severity,
-               severity_numeric, description, latitude, longitude
-        FROM space_pulse.space_alerts
+               severity_numeric, description,
+               NULL AS latitude, NULL AS longitude
+        FROM space_pulse_dev_marts.mart_space_alerts
         WHERE {where_str}
         ORDER BY severity_numeric DESC, created_at DESC
         LIMIT {limit}
@@ -47,13 +48,12 @@ def get_daily_summary():
             countIf(alert_type = 'EARTH_EVENT' AND created_at >= today() - INTERVAL 1 DAY) AS earth_events_24h,
             countIf(alert_type = 'SATELLITE_ANOMALY' AND created_at >= today() - INTERVAL 1 DAY) AS satellite_anomalies_24h,
             CASE
-                WHEN countIf(severity = 'CRITICAL' AND created_at >= today()) > 0 THEN 'CRITICAL'
-                WHEN countIf(severity = 'HIGH' AND created_at >= today()) > 0 THEN 'HIGH'
-                WHEN countIf(severity = 'MEDIUM' AND created_at >= today()) > 0 THEN 'ELEVATED'
+                WHEN max(severity_numeric) >= 5 THEN 'CRITICAL'
+                WHEN max(severity_numeric) = 4 THEN 'HIGH'
+                WHEN max(severity_numeric) = 3 THEN 'ELEVATED'
                 ELSE 'NORMAL'
             END AS system_status,
             max(created_at) AS last_updated
-        FROM space_pulse.space_alerts
-        WHERE created_at >= today() - INTERVAL 7 DAY
+        FROM space_pulse_dev_marts.mart_space_alerts
     """
     return execute_query(query, single_row=True)

@@ -18,14 +18,18 @@ def execute_query(query: str, single_row: bool = False) -> Any:
     """
     Ejecuta una query SELECT y retorna resultado como lista de dicts.
     Si single_row=True, retorna un solo dict.
+    Retorna vacío si la tabla no existe o hay error de conexión.
     """
-    client = get_client()
-    result = client.query(query)
+    try:
+        client = get_client()
+        result = client.query(query)
 
-    rows = []
-    for row in result.result_rows:
-        rows.append(dict(zip(result.column_names, row)))
+        rows = []
+        for row in result.result_rows:
+            rows.append(dict(zip(result.column_names, row)))
 
-    if single_row:
-        return rows[0] if rows else {}
-    return rows
+        if single_row:
+            return rows[0] if rows else {}
+        return rows
+    except Exception:
+        return {} if single_row else []
