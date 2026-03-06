@@ -42,7 +42,7 @@ export default function Header({ summary, lastUpdated }) {
           />
           <Widget
             icon={<Sun size={24} />}
-            label="Solar Alerts (24h)"
+            label="Solar Alerts (7d)"
             value={summary.solar_alerts_24h ?? 0}
             colorClass="text-yellow-400 bg-yellow-500/20"
           />
@@ -54,7 +54,7 @@ export default function Header({ summary, lastUpdated }) {
           />
           <Widget
             icon={<Globe size={24} />}
-            label="Earth Events (24h)"
+            label="Earth Events (7d)"
             value={summary.earth_events_24h ?? 0}
             colorClass="text-blue-400 bg-blue-500/20"
           />

@@ -43,10 +43,10 @@ def get_daily_summary():
             today() AS summary_date,
             countIf(created_at >= today()) AS total_alerts_today,
             countIf(severity = 'CRITICAL' AND created_at >= today()) AS critical_today,
-            countIf(alert_type = 'SOLAR_FLARE' AND created_at >= today() - INTERVAL 1 DAY) AS solar_alerts_24h,
+            countIf(alert_type = 'SOLAR_FLARE' AND created_at >= today() - INTERVAL 7 DAY) AS solar_alerts_24h,
             countIf(alert_type = 'NEAR_EARTH_OBJECT') AS high_risk_neos_upcoming,
-            countIf(alert_type = 'EARTH_EVENT' AND created_at >= today() - INTERVAL 1 DAY) AS earth_events_24h,
-            countIf(alert_type = 'SATELLITE_ANOMALY' AND created_at >= today() - INTERVAL 1 DAY) AS satellite_anomalies_24h,
+            countIf(alert_type = 'EARTH_EVENT' AND created_at >= today() - INTERVAL 7 DAY) AS earth_events_24h,
+            countIf(alert_type = 'SATELLITE_ANOMALY' AND created_at >= today() - INTERVAL 7 DAY) AS satellite_anomalies_24h,
             CASE
                 WHEN max(severity_numeric) >= 5 THEN 'CRITICAL'
                 WHEN max(severity_numeric) = 4 THEN 'HIGH'
