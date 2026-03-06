@@ -1,17 +1,14 @@
 // src/components/APOD/APOD.jsx
 import { useState, useEffect } from 'react'
 import { Camera } from 'lucide-react'
-import axios from 'axios'
+import { fetchApod } from '../../api/spaceApi'
 
 export default function APOD() {
   const [apod, setApod] = useState(null)
 
   useEffect(() => {
-    // Fetch APOD directly from NASA (no backend dependency)
-    const key = import.meta.env.VITE_NASA_API_KEY || 'DEMO_KEY'
-    axios
-      .get(`https://api.nasa.gov/planetary/apod?api_key=${key}&thumbs=true`)
-      .then(res => setApod(res.data))
+    fetchApod()
+      .then(data => setApod(data))
       .catch(() => {})
   }, [])
 

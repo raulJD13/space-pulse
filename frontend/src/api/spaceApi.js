@@ -21,3 +21,4 @@ export const fetchMarsWeather = () => v1.get('/mars/weather/latest').then(r => r
 export const fetchMarsHistory = (params = {}) => v1.get('/mars/weather', { params }).then(r => r.data)
 export const fetchSatellites = (params = {}) => v1.get('/satellites/', { params }).then(r => r.data)
 export const fetchSolarEvents = (params = {}) => v1.get('/solar/events', { params }).then(r => r.data)
+export const fetchApod = () => v1.get('/apod/').then(r => r.data)

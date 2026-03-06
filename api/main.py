@@ -1,7 +1,7 @@
 # api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import alerts, solar, asteroids, earth, mars, satellites
+from api.routers import alerts, solar, asteroids, earth, mars, satellites, apod
 
 app = FastAPI(
     title="Space Pulse API",
@@ -23,6 +23,7 @@ app.include_router(asteroids.router, prefix="/api/v1")
 app.include_router(earth.router, prefix="/api/v1")
 app.include_router(mars.router, prefix="/api/v1")
 app.include_router(satellites.router, prefix="/api/v1")
+app.include_router(apod.router, prefix="/api/v1")
 
 
 @app.get("/health")
