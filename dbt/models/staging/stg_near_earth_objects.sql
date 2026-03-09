@@ -1,4 +1,6 @@
 -- dbt/models/staging/stg_near_earth_objects.sql
+-- Source: space_pulse.neo_daily (typed table populated by Airflow NeoWs DAG)
+-- Columns already cleaned and typed — no JSON parsing required.
 
 WITH raw AS (
     SELECT * FROM {{ source('raw', 'neows_raw') }}
@@ -6,21 +8,17 @@ WITH raw AS (
 
 cleaned AS (
     SELECT
-        id AS neo_id,
-        name AS neo_name,
-        
-        -- Extraemos el diámetro (que lo dejamos como String en ClickHouse para parsearlo aquí)
-        JSONExtractFloat(JSONExtractRaw(JSONExtractRaw(estimated_diameter, 'kilometers'), 'estimated_diameter_max')) AS diameter_max_km,
-        
-        is_potentially_hazardous_asteroid AS is_hazardous,
-        
-        _velocity_km_s AS velocity_km_s,
-        _miss_distance_lunar AS miss_distance_lunar,
-        CAST(_close_approach_date AS Date) AS close_approach_date,
-        CAST(_ingestion_date AS Date) AS ingested_at
-        
+        neo_id,
+        neo_name,
+        diameter_max_km,
+        is_hazardous,
+        velocity_km_s,
+        miss_distance_lunar,
+        miss_distance_km,
+        close_approach_date,
+        ingested_at
     FROM raw
-    WHERE id IS NOT NULL AND id != ''
+    WHERE neo_id IS NOT NULL AND neo_id != ''
 )
 
 SELECT * FROM cleaned

@@ -1,41 +1,30 @@
 -- dbt/models/staging/stg_solar_flares.sql
+-- Source: space_pulse.solar_events (typed table populated by Airflow DONKI DAG)
+-- Filters to FLARE events only; maps column names to downstream expectations.
 
 WITH raw AS (
-    SELECT json FROM {{ source('raw', 'donki_flares_raw') }}
-),
-
-exploded AS (
-    SELECT arrayJoin(JSONExtractArrayRaw(JSONExtractRaw(json, 'flares'))) AS flare_json
-    FROM raw
-    WHERE JSONHas(json, 'flares')
+    SELECT * FROM {{ source('raw', 'donki_flares_raw') }}
+    WHERE event_type = 'FLARE'
 ),
 
 cleaned AS (
     SELECT
-        JSONExtractString(flare_json, 'flrID') AS flare_id,
-        
-        -- Usamos parseDateTimeBestEffort que sabe leer las "T" y las "Z" de la NASA
-        parseDateTimeBestEffort(JSONExtractString(flare_json, 'beginTime')) AS begin_time,
-        
-        -- Misma función para peak y end, con ifNull por si no vienen
-        parseDateTimeBestEffort(ifNull(JSONExtractString(flare_json, 'peakTime'), JSONExtractString(flare_json, 'beginTime'))) AS peak_time,
-        parseDateTimeBestEffort(ifNull(JSONExtractString(flare_json, 'endTime'), JSONExtractString(flare_json, 'beginTime'))) AS end_time,
-        
-        JSONExtractString(flare_json, 'classType') AS flare_class,        
-        LEFT(JSONExtractString(flare_json, 'classType'), 1) AS flare_class_letter,
-        
-        -- Protección: Si la clase tiene más de 1 letra (ej: M1.2), sacamos el número. Si no, ponemos 0.0
+        event_id                                        AS flare_id,
+        begin_time,
+        peak_time,
+        end_time,
+        class_type                                      AS flare_class,
+        LEFT(class_type, 1)                             AS flare_class_letter,
         CAST(
             if(
-                length(JSONExtractString(flare_json, 'classType')) > 1, 
-                SUBSTRING(JSONExtractString(flare_json, 'classType'), 2), 
+                length(class_type) > 1,
+                SUBSTRING(class_type, 2),
                 '0.0'
             ) AS Float32
-        ) AS flare_class_number,
-        
-        JSONExtractString(flare_json, 'sourceLocation') AS source_location
-    FROM exploded
+        )                                               AS flare_class_number,
+        source_location
+    FROM raw
 )
 
-SELECT * FROM cleaned 
+SELECT * FROM cleaned
 WHERE flare_id != ''

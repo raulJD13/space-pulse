@@ -5,7 +5,7 @@
     
         
         insert into `space_pulse_dev_intermediate`.`int_neo_risk_score__dbt_backup`
-        ("neo_id", "neo_name", "diameter_max_km", "is_hazardous", "velocity_km_s", "miss_distance_lunar", "close_approach_date", "ingested_at", "risk_score", "risk_level", "days_until_approach")-- dbt/models/intermediate/int_neo_risk_score.sql
+        ("neo_id", "neo_name", "diameter_max_km", "is_hazardous", "velocity_km_s", "miss_distance_lunar", "miss_distance_km", "close_approach_date", "ingested_at", "risk_score", "risk_level", "days_until_approach")-- dbt/models/intermediate/int_neo_risk_score.sql
 
 WITH staged AS (
     SELECT * FROM `space_pulse_dev_staging`.`stg_near_earth_objects`
