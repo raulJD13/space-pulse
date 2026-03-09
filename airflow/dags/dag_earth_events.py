@@ -37,12 +37,19 @@ def earth_events_pipeline():
     @task()
     def extract_epic_images() -> list:
         """Extrae metadatos de imágenes EPIC del día."""
+        import httpx
+        import logging
         from ingestion.clients.epic_client import EPICClient
 
         client = EPICClient(api_key=os.environ.get("NASA_API_KEY", "DEMO_KEY"))
-        images = asyncio.run(client.get_images())
-        if isinstance(images, list):
-            return client.flatten_images(images)
+        try:
+            images = asyncio.run(client.get_images())
+            if isinstance(images, list):
+                return client.flatten_images(images)
+        except (httpx.HTTPStatusError, httpx.TransportError) as e:
+            logging.getLogger(__name__).warning(
+                f"EPIC API unavailable ({e}), skipping EPIC images this run."
+            )
         return []
 
     @task()

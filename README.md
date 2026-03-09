@@ -476,3 +476,36 @@ ClickHouse solo ejecuta los scripts de `/docker-entrypoint-initdb.d/` la primera
 ## Licencia
 
 Pendiente de definir. Datos de NASA son de dominio público bajo la [NASA Open Data Policy](https://www.nasa.gov/open/).
+
+
+
+Redesign summary — 11 files, zero build errors.                                                                                                    
+                                                                                                                                                     
+  What changed                                                                                                                                       
+                                                                                                                                                     
+  Global                                                                                                                                           
+  - Deep space background (#020817) with fixed radial nebula gradients (purple, blue, cyan)
+  - .cosmic-card system — glassmorphism cards (blur, dark bg, subtle blue border → glow on hover)
+  - Custom scrollbar, glowing text utilities, staggered fade-in-up animations
+
+  StarField (new component)
+  - Canvas-based: 280 individually twinkling stars + periodic shooting stars with gradient trails
+  - Runs at 60fps via requestAnimationFrame, no external deps
+
+  APOD — promoted to full-width hero
+  - 60/40 split layout: large image left, content right
+  - 3D perspective tilt on mouse move (CSS rotateX/rotateY on perspective(1200px))
+  - Gradient glow border around the image, zoom on hover
+  - Skeleton loading state, video play overlay, "Watch video" link
+
+  Header
+  - SPACE PULSE in bold gradient (blue→cyan→violet) with glow
+  - Pulsing logo orb, blinking LIVE badge
+  - KPI cards each with their own accent color (amber/orange/cyan/violet)
+
+  Panel cards
+  - Solar: corona glow animation on Sun icon, refined chart tooltip
+  - NEO: hazardous rows highlighted, risk badges with matching colors
+  - Earth Events: SVG grid overlay with highlighted equator/prime meridian, OPERATIONAL badge, ripple rings on wildfires/volcanoes, rich tooltips
+  - Mars: rust/orange theme, 4-metric grid with icons, handles no-data state cleanly
+  - Satellites: violet theme, AnomalyBar component showing anomaly severity visually, green "all nominal" empty state

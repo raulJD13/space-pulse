@@ -28,17 +28,25 @@ def satellite_pipeline():
     @task()
     def extract_tle_data() -> list:
         """Descarga TLE de satélites activos (Starlink, ISS, weather sats)."""
+        import httpx
+        import logging
         from ingestion.clients.tle_client import TLEClient
 
         client = TLEClient()
 
         async def get_all():
-            starlink, iss, weather = await asyncio.gather(
-                client.get_satellites("starlink", 50),
-                client.get_satellites("ISS", 5),
-                client.get_satellites("weather", 30),
-            )
-            return starlink + iss + weather
+            try:
+                starlink, iss, weather = await asyncio.gather(
+                    client.get_satellites("starlink", 50),
+                    client.get_satellites("ISS", 5),
+                    client.get_satellites("weather", 30),
+                )
+                return starlink + iss + weather
+            except (httpx.HTTPStatusError, httpx.TransportError) as e:
+                logging.getLogger(__name__).warning(
+                    f"TLE API unavailable ({e}), skipping satellite data this run."
+                )
+                return []
 
         return asyncio.run(get_all())
 
