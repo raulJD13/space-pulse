@@ -43,10 +43,35 @@ function LoadingScreen() {
   )
 }
 
+function ErrorScreen({ message, onRetry }) {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-4">
+      <div
+        className="cosmic-card max-w-md w-full p-8 text-center"
+        style={{ borderColor: 'rgba(239,68,68,0.35)' }}
+      >
+        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
+          <span className="text-red-400 text-xl">!</span>
+        </div>
+        <h2 className="text-slate-200 font-bold mb-2">API Unreachable</h2>
+        <p className="text-slate-500 text-sm leading-relaxed mb-5">{message}</p>
+        <button
+          onClick={onRetry}
+          className="px-4 py-2 rounded-lg text-sm font-medium text-blue-300 hover:text-blue-200 transition-colors"
+          style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)' }}
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const {
     summary, alerts, neos, earthEvents,
-    marsWeather, satellites, loading, lastUpdated,
+    marsWeather, satellites, loading, lastUpdated, error, refetch,
   } = useSpacePulse()
 
   return (
@@ -56,6 +81,8 @@ export default function App() {
       <div className="relative z-10">
         {loading ? (
           <LoadingScreen />
+        ) : error ? (
+          <ErrorScreen message={error} onRetry={refetch} />
         ) : (
           <div className="max-w-[1680px] mx-auto px-5 py-5 space-y-5">
             {/* Header with KPIs */}
@@ -99,3 +126,4 @@ export default function App() {
     </div>
   )
 }
+

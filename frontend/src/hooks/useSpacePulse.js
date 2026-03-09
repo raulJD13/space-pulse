@@ -21,35 +21,41 @@ export function useSpacePulse() {
   })
 
   const fetchAll = useCallback(async () => {
-    try {
-      const results = await Promise.allSettled([
-        fetchSummary(),
-        fetchAlerts({ hours: 168, limit: 100 }),
-        fetchNeos({ days_ahead: 7, limit: 50 }),
-        fetchEarthEvents({ status: 'open', limit: 50 }),
-        fetchMarsWeather(),
-        fetchSatellites({ anomalous_only: true, limit: 20 }),
-      ])
+    const results = await Promise.allSettled([
+      fetchSummary(),
+      fetchAlerts({ hours: 168, limit: 100 }),
+      fetchNeos({ days_ahead: 7, limit: 50 }),
+      fetchEarthEvents({ status: 'open', limit: 50 }),
+      fetchMarsWeather(),
+      fetchSatellites({ anomalous_only: true, limit: 20 }),
+    ])
 
-      const [summary, alerts, neos, earthEvents, marsWeather, satellites] = results.map(
-        r => r.status === 'fulfilled' ? r.value : null
-      )
-
+    const allFailed = results.every(r => r.status === 'rejected')
+    if (allFailed) {
       setState(prev => ({
         ...prev,
-        summary: summary || prev.summary,
-        alerts: alerts || prev.alerts,
-        neos: neos || prev.neos,
-        earthEvents: earthEvents || prev.earthEvents,
-        marsWeather: marsWeather || prev.marsWeather,
-        satellites: satellites || prev.satellites,
         loading: false,
-        lastUpdated: new Date(),
-        error: null,
+        error: 'Cannot reach the API server. Check that the backend is running on port 8000.',
       }))
-    } catch (error) {
-      setState(prev => ({ ...prev, loading: false, error: error.message }))
+      return
     }
+
+    const [summary, alerts, neos, earthEvents, marsWeather, satellites] = results.map(
+      r => r.status === 'fulfilled' ? r.value : null
+    )
+
+    setState(prev => ({
+      ...prev,
+      summary: summary ?? prev.summary,
+      alerts: alerts ?? prev.alerts,
+      neos: neos ?? prev.neos,
+      earthEvents: earthEvents ?? prev.earthEvents,
+      marsWeather: marsWeather ?? prev.marsWeather,
+      satellites: satellites ?? prev.satellites,
+      loading: false,
+      lastUpdated: new Date(),
+      error: null,
+    }))
   }, [])
 
   useEffect(() => {
