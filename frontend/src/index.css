@@ -14,97 +14,157 @@
 body {
   background-color: var(--bg-space);
   background-image:
-    radial-gradient(ellipse at 12% 42%, rgba(88, 28, 135, 0.13) 0%, transparent 52%),
-    radial-gradient(ellipse at 88% 12%, rgba(30, 64, 175, 0.11) 0%, transparent 45%),
+    radial-gradient(ellipse at 12% 42%, rgba(88, 28, 135, 0.14) 0%, transparent 52%),
+    radial-gradient(ellipse at 88% 12%, rgba(30, 64, 175, 0.12) 0%, transparent 45%),
     radial-gradient(ellipse at 55% 90%, rgba(6, 78, 112, 0.09) 0%, transparent 40%);
   background-attachment: fixed;
   color: #e2e8f0;
   min-height: 100vh;
 }
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: rgba(2, 8, 23, 0.8); }
-::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.35); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.6); }
+::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.55); }
 
-/* Cosmic card */
+/* ─── Cosmic card ─── */
 .cosmic-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 14px;
+  border-radius: 12px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.025) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset;
 }
 .cosmic-card:hover {
   border-color: var(--card-border-hover);
-  box-shadow: 0 0 28px rgba(59, 130, 246, 0.09), inset 0 1px 0 rgba(255,255,255,0.04);
+  box-shadow:
+    0 0 28px rgba(59, 130, 246, 0.07),
+    0 8px 40px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Section header separator */
-.section-sep {
-  border-bottom: 1px solid rgba(59, 130, 246, 0.13);
-  padding-bottom: 10px;
-  margin-bottom: 14px;
+/* ─── Hero card (EarthGlobe centerpiece) ─── */
+.card-hero {
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.08),
+    0 12px 56px rgba(0, 0, 0, 0.65),
+    0 0 80px rgba(6, 182, 212, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.card-hero:hover {
+  box-shadow:
+    0 0 0 1px rgba(6, 182, 212, 0.15),
+    0 12px 56px rgba(0, 0, 0, 0.65),
+    0 0 80px rgba(6, 182, 212, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Live dot */
-.live-dot {
-  width: 7px; height: 7px;
-  background: #22c55e;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #22c55e;
-  flex-shrink: 0;
-  animation: live-blink 2s ease-in-out infinite;
-}
-
-/* APOD glow border */
-.apod-glow-border {
+/* ─── Aurora border (APOD) ─── */
+.aurora-border {
   position: relative;
-  border-radius: 10px;
-  overflow: hidden;
+  isolation: isolate;
+  border-radius: 13px;
 }
-.apod-glow-border::before {
+.aurora-border::before {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: 11px;
-  background: linear-gradient(135deg,
-    rgba(139, 92, 246, 0.5),
-    rgba(59, 130, 246, 0.4),
-    rgba(6, 182, 212, 0.25));
-  z-index: 0;
-  opacity: 0.65;
-  transition: opacity 0.35s;
+  inset: -1.5px;
+  border-radius: 13.5px;
+  background: linear-gradient(
+    135deg,
+    #8b5cf6 0%,
+    #3b82f6 28%,
+    #06b6d4 52%,
+    #8b5cf6 75%,
+    #a78bfa 100%
+  );
+  background-size: 300% 300%;
+  z-index: -1;
+  opacity: 0.45;
+  animation: aurora-shift 8s ease-in-out infinite;
+  filter: blur(0.8px);
+}
+.aurora-border:hover::before {
+  opacity: 0.85;
+  filter: blur(1.5px);
+}
+
+/* ─── Section separator ─── */
+.section-sep {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+/* ─── Live dot ─── */
+.live-dot {
+  width: 6px; height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #22c55e;
+  flex-shrink: 0;
+  animation: live-blink 2.4s ease-in-out infinite;
+}
+
+/* ─── APOD legacy image wrapper ─── */
+.apod-glow-border {
+  position: relative; border-radius: 10px; overflow: hidden;
+}
+.apod-glow-border::before {
+  content: ''; position: absolute; inset: -1px; border-radius: 11px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(59,130,246,0.4), rgba(6,182,212,0.25));
+  z-index: 0; opacity: 0.65; transition: opacity 0.35s;
 }
 .apod-glow-border:hover::before { opacity: 1; }
 .apod-glow-border img {
-  display: block;
-  position: relative;
-  z-index: 1;
+  display: block; position: relative; z-index: 1;
   transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .apod-glow-border:hover img { transform: scale(1.035); }
 
-/* Text glows */
-.text-glow-blue   { text-shadow: 0 0 12px rgba(59, 130, 246, 0.7); }
-.text-glow-cyan   { text-shadow: 0 0 12px rgba(6, 182, 212, 0.7); }
-.text-glow-violet { text-shadow: 0 0 12px rgba(139, 92, 246, 0.7); }
-.text-glow-amber  { text-shadow: 0 0 12px rgba(245, 158, 11, 0.7); }
+/* ─── Text glows ─── */
+.text-glow-blue   { text-shadow: 0 0 12px rgba(59,130,246,0.7); }
+.text-glow-cyan   { text-shadow: 0 0 12px rgba(6,182,212,0.7); }
+.text-glow-violet { text-shadow: 0 0 12px rgba(139,92,246,0.7); }
+.text-glow-amber  { text-shadow: 0 0 12px rgba(245,158,11,0.7); }
+.text-glow-red    { text-shadow: 0 0 14px rgba(239,68,68,0.75); }
 
-/* Shine on hover */
+/* ─── Shine sweep — desynchronized via CSS custom prop ─── */
 .shine-on-hover { position: relative; overflow: hidden; }
 .shine-on-hover::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -80%;
+  content: ''; position: absolute; top: 0; left: -80%;
   width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-  animation: shine 5s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  animation: shine 8s ease-in-out infinite;
+  animation-delay: var(--shine-delay, 0s);
   pointer-events: none;
 }
 
-/* Fade-in-up stagger */
+/* ─── Earth map scan line ─── */
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6,182,212,0.15) 15%,
+    rgba(6,182,212,0.65) 50%,
+    rgba(6,182,212,0.15) 85%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(6,182,212,0.35), 0 0 28px rgba(6,182,212,0.12);
+  pointer-events: none;
+  animation: scan-sweep 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  z-index: 5;
+}
+
+/* ─── Anim-card entrance ─── */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -116,23 +176,83 @@ body {
 .anim-delay-4 { animation-delay: 0.28s; }
 .anim-delay-5 { animation-delay: 0.35s; }
 
-/* Live blink keyframe */
-@keyframes live-blink {
-  0%,100% { opacity: 1; box-shadow: 0 0 6px #22c55e; }
-  50%      { opacity: 0.3; box-shadow: none; }
+/* ─── Keyframes ─── */
+
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%;   opacity: 0.42; }
+  33%       { background-position: 100% 0%;  opacity: 0.62; }
+  66%       { background-position: 50% 100%; opacity: 0.48; }
 }
 
-/* Shine keyframe */
+@keyframes live-blink {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 5px #22c55e; }
+  50%       { opacity: 0.3; box-shadow: none; }
+}
+
 @keyframes shine {
   0%   { left: -80%; }
   100% { left: 150%; }
 }
 
-/* Star canvas is fixed full-screen behind everything */
+@keyframes scan-sweep {
+  0%   { top: -2px; opacity: 0; }
+  4%   { opacity: 1; }
+  90%  { opacity: 0.7; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes ripple-out {
+  0%   { transform: scale(1);   opacity: 0.72; }
+  100% { transform: scale(5.5); opacity: 0; }
+}
+
+@keyframes corona-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(251,191,36,0.5));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(251,191,36,0.95)) drop-shadow(0 0 16px rgba(251,191,36,0.35));
+    transform: scale(1.1);
+  }
+}
+.animate-corona { animation: corona-pulse 3.6s ease-in-out infinite; }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(96,165,250,0.5); opacity: 1; }
+  50%       { box-shadow: 0 0 14px rgba(96,165,250,0.95), 0 0 28px rgba(96,165,250,0.3); opacity: 0.85; }
+}
+.animate-glow-pulse { animation: glow-pulse 2.4s ease-in-out infinite; }
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes status-critical-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), inset 0 1px 0 rgba(255,255,255,0.04); }
+  50%       { box-shadow: 0 0 24px rgba(239,68,68,0.28), 0 0 48px rgba(239,68,68,0.1), inset 0 1px 0 rgba(255,255,255,0.04); }
+}
+
+@keyframes img-drift {
+  0%, 100% { object-position: 50% 50%; }
+  33%       { object-position: 52% 48%; }
+  66%       { object-position: 48% 52%; }
+}
+
 canvas.starfield {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 0;
+  pointer-events: none; z-index: 0;
+}
+
+/* Scanline texture on earth map */
+.scanline-bg {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.025) 2px,
+    rgba(0, 0, 0, 0.025) 4px
+  );
 }

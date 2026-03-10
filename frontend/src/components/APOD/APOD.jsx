@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Camera, PlayCircle, ExternalLink } from 'lucide-react'
+import { Camera, PlayCircle, ExternalLink, Calendar, User } from 'lucide-react'
 import { fetchApod } from '../../api/spaceApi'
 
 export default function APOD() {
@@ -11,129 +11,165 @@ export default function APOD() {
     fetchApod().then(setApod).catch(() => {})
   }, [])
 
-  const handleMouseMove = (e) => {
+  const onMove = (e) => {
     const r = cardRef.current?.getBoundingClientRect()
     if (!r) return
-    const nx = (e.clientX - r.left) / r.width
-    const ny = (e.clientY - r.top) / r.height
-    setTilt({ x: (ny - 0.5) * -5, y: (nx - 0.5) * 7 })
+    setTilt({
+      x: ((e.clientY - r.top)  / r.height - 0.5) * -7,
+      y: ((e.clientX - r.left) / r.width  - 0.5) *  9,
+    })
   }
+  const onLeave = () => setTilt({ x: 0, y: 0 })
 
-  const handleMouseLeave = () => setTilt({ x: 0, y: 0 })
+  const isResting = tilt.x === 0 && tilt.y === 0
 
   const imgUrl = apod
     ? (apod.media_type === 'video' ? (apod.thumbnail_url || '') : apod.url)
     : null
 
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="cosmic-card overflow-hidden border border-violet-500/25 hover:border-violet-500/50 transition-all duration-300"
-      style={{
-        transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: tilt.x === 0 && tilt.y === 0
-          ? 'transform 0.6s ease-out, border-color 0.3s ease, box-shadow 0.3s ease'
-          : 'transform 0.1s ease-out',
-        boxShadow: '0 0 40px rgba(139, 92, 246, 0.08)',
-        willChange: 'transform',
-      }}
-    >
-      <div className="flex flex-col lg:flex-row">
-
-        {/* ── Left: Image (60%) ── */}
-        <div className="lg:w-[60%] shrink-0">
+    <div className="aurora-border">
+      <div
+        ref={cardRef}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        className="cosmic-card overflow-hidden"
+        style={{
+          borderColor: 'rgba(139,92,246,0.18)',
+          transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: isResting
+            ? 'transform 0.75s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s'
+            : 'transform 0.08s ease-out',
+          willChange: 'transform',
+        }}
+      >
+        {/* Image area */}
+        <div className="relative overflow-hidden" style={{ height: 210 }}>
           {imgUrl ? (
-            <div className="apod-glow-border h-full" style={{ minHeight: '360px' }}>
+            <>
               <img
                 src={imgUrl}
-                alt={apod?.title || 'Astronomy Picture of the Day'}
+                alt={apod?.title || 'APOD'}
                 className="w-full h-full object-cover"
-                style={{ minHeight: '360px', maxHeight: '520px' }}
+                style={{
+                  transform: `scale(1.07) translateX(${tilt.y * -0.25}px) translateY(${tilt.x * 0.2}px)`,
+                  transition: isResting
+                    ? 'transform 0.75s cubic-bezier(0.23, 1, 0.32, 1)'
+                    : 'transform 0.08s ease-out',
+                }}
               />
+
+              {/* Deep gradient overlay */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top, rgba(6,10,25,0.96) 0%, rgba(6,10,25,0.28) 48%, transparent 72%)',
+                }}
+              />
+              {/* Vignette */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at center, transparent 58%, rgba(2,8,23,0.45) 100%)',
+                }}
+              />
+
+              {/* Media type badge */}
+              <span
+                className="absolute top-2.5 left-2.5 text-[8px] tracking-widest uppercase font-bold px-2 py-0.5 rounded-full"
+                style={{
+                  background: 'rgba(139,92,246,0.32)',
+                  border: '1px solid rgba(139,92,246,0.5)',
+                  color: '#c4b5fd',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 0 14px rgba(139,92,246,0.28)',
+                }}
+              >
+                {apod?.media_type || 'image'}
+              </span>
+
               {apod?.media_type === 'video' && (
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30">
-                  <PlayCircle size={64} className="text-white/80 drop-shadow-lg" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{
+                      background: 'rgba(139,92,246,0.22)',
+                      border: '1px solid rgba(139,92,246,0.5)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: '0 0 20px rgba(139,92,246,0.3)',
+                    }}
+                  >
+                    <PlayCircle size={22} className="text-violet-300" />
+                  </div>
                 </div>
               )}
-            </div>
+
+              {/* Title overlay */}
+              {apod?.title && (
+                <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
+                  <p
+                    className="text-[13px] font-bold text-white leading-snug line-clamp-2"
+                    style={{ textShadow: '0 1px 10px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.7)' }}
+                  >
+                    {apod.title}
+                  </p>
+                </div>
+              )}
+            </>
           ) : (
             <div
-              className="h-full flex items-center justify-center bg-gradient-to-br from-violet-950/40 to-indigo-950/40"
-              style={{ minHeight: '360px' }}
+              className="w-full h-full flex flex-col items-center justify-center gap-2"
+              style={{
+                background: 'linear-gradient(135deg, rgba(88,28,135,0.22), rgba(30,64,175,0.16))',
+              }}
             >
-              <Camera size={48} className="text-violet-400/30 animate-pulse" />
+              <Camera size={26} className="text-violet-400/35 animate-pulse" />
+              <p className="text-[9px] text-slate-700 tracking-[0.2em] uppercase">Loading</p>
             </div>
           )}
         </div>
 
-        {/* ── Right: Content (40%) ── */}
-        <div className="lg:w-[40%] flex flex-col justify-between p-6 lg:p-8">
-          <div>
-            {/* Section label */}
-            <div className="flex items-center gap-2 mb-4">
-              <Camera size={13} className="text-violet-400" />
-              <span className="text-[10px] uppercase tracking-[0.22em] text-violet-400 font-semibold">
-                Astronomy Picture of the Day
-              </span>
-            </div>
+        {/* Metadata */}
+        <div className="p-3 space-y-2">
+          <p className="text-[8px] text-violet-400/65 tracking-[0.22em] uppercase font-bold">
+            Astronomy Picture of the Day
+          </p>
 
-            {apod ? (
-              <>
-                {/* Date badge */}
-                <span className="inline-block text-[11px] text-slate-500 bg-slate-800/60 border border-slate-700/50 rounded-full px-3 py-0.5 mb-3">
+          {apod ? (
+            <div className="flex flex-wrap gap-1.5">
+              {apod.date && (
+                <span className="flex items-center gap-1 text-[9px] text-slate-400 bg-slate-800/70 border border-slate-700/40 rounded-full px-2 py-0.5">
+                  <Calendar size={8} />
                   {apod.date}
                 </span>
-
-                {/* Title */}
-                <h2 className="text-2xl lg:text-[1.6rem] font-bold text-white leading-snug mb-4 text-glow-violet">
-                  {apod.title}
-                </h2>
-
-                {/* Explanation */}
-                <div className="relative">
-                  <p className="text-sm text-slate-300/90 leading-relaxed line-clamp-[7]">
-                    {apod.explanation}
-                  </p>
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"
-                    style={{ background: 'linear-gradient(to top, rgba(6,14,32,0.9), transparent)' }}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="space-y-3 mt-2">
-                <div className="h-4 w-24 bg-slate-800/60 rounded animate-pulse" />
-                <div className="h-7 w-3/4 bg-slate-800/60 rounded animate-pulse" />
-                <div className="h-3 w-full bg-slate-800/60 rounded animate-pulse" />
-                <div className="h-3 w-5/6 bg-slate-800/60 rounded animate-pulse" />
-                <div className="h-3 w-4/5 bg-slate-800/60 rounded animate-pulse" />
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          {apod && (
-            <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
+              )}
               {apod.copyright && (
-                <p className="text-xs text-slate-600">© {apod.copyright}</p>
+                <span className="flex items-center gap-1 text-[9px] text-slate-500 bg-slate-800/50 border border-slate-700/30 rounded-full px-2 py-0.5 max-w-[130px]">
+                  <User size={8} />
+                  <span className="truncate">{apod.copyright.trim()}</span>
+                </span>
               )}
               {apod.media_type === 'video' && apod.url && (
                 <a
                   href={apod.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-auto flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                  className="flex items-center gap-1 text-[9px] text-violet-400 hover:text-violet-300 transition-colors bg-violet-500/10 border border-violet-500/22 rounded-full px-2 py-0.5"
                 >
-                  <ExternalLink size={12} />
-                  Watch video
+                  <ExternalLink size={8} />
+                  Watch
                 </a>
               )}
             </div>
+          ) : (
+            <div className="space-y-1.5">
+              <div className="h-2 w-3/4 bg-slate-800/60 rounded animate-pulse" />
+              <div className="h-2 w-1/2 bg-slate-800/40 rounded animate-pulse" />
+            </div>
           )}
         </div>
-
       </div>
     </div>
   )
