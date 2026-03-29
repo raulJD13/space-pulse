@@ -10,7 +10,7 @@ x-airflow-common: &airflow-common
     MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     CLICKHOUSE_HOST: clickhouse
-    _PIP_ADDITIONAL_REQUIREMENTS: "httpx minio confluent-kafka scikit-learn joblib"
+    _PIP_ADDITIONAL_REQUIREMENTS: "httpx minio confluent-kafka scikit-learn<1.6 numpy<2 scipy<1.14 joblib"
     PYTHONPATH: "/opt/airflow"
   volumes:
     - ./airflow/dags:/opt/airflow/dags
