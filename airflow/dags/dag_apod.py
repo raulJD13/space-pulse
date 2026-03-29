@@ -51,9 +51,16 @@ def apod_pipeline():
         storage.put_json("space-pulse-raw", path, apod)
         return path
 
+    @task()
+    def insert_to_clickhouse(apod: dict) -> int:
+        """Inserta APOD en ClickHouse."""
+        from ingestion.clickhouse_inserter import insert_apod
+        return insert_apod(apod)
+
     # Flujo
     apod_data = extract_apod()
     save_to_minio(apod_data)
+    insert_to_clickhouse(apod_data)
 
 
 dag_instance = apod_pipeline()

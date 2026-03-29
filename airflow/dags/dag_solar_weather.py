@@ -45,22 +45,29 @@ def solar_weather_pipeline():
     def save_to_minio(extracted: dict) -> str:
         """Guarda el JSON raw en MinIO bajo donki/YYYY/MM/DD/HHMMSS.json"""
         from ingestion.minio_storage import MinIOStorage
-        
+
         storage = MinIOStorage(
             endpoint=os.environ.get("MINIO_ENDPOINT", "minio:9000"),
             access_key=os.environ.get("MINIO_ACCESS_KEY", "minioadmin"),
             secret_key=os.environ.get("MINIO_SECRET_KEY", "minioadmin123secure")
         )
-        
+
         now = datetime.now(timezone.utc)
         path = f"donki/{now.strftime('%Y/%m/%d/%H%M%S')}.json"
-        
+
         storage.put_json("space-pulse-raw", path, extracted["data"])
         return path
-    
-    # Definimos el orden del flujo: Extraer -> Guardar
+
+    @task()
+    def insert_to_clickhouse(extracted: dict) -> int:
+        """Inserta eventos solares en ClickHouse (solar_events + space_alerts)."""
+        from ingestion.clickhouse_inserter import insert_solar_events
+        return insert_solar_events(extracted["data"])
+
+    # Definimos el orden del flujo: Extraer -> Guardar + Insertar en paralelo
     extracted_data = extract_solar_events()
     save_to_minio(extracted_data)
+    insert_to_clickhouse(extracted_data)
 
 # Instanciamos el DAG
 dag_instance = solar_weather_pipeline()

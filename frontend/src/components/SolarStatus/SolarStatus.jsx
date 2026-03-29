@@ -23,19 +23,19 @@ export default function SolarStatus({ alerts }) {
 
   const classCounts = {}
   solarAlerts.forEach(a => {
-    const m = a.description?.match(/class\s+([XMCBA])/i)
-    const l = m ? m[1].toUpperCase() : '?'
-    classCounts[l] = (classCounts[l] || 0) + 1
+    // Match "Solar Flare class M1.3 detected" or legacy "Solar Flare M1.3 detected"
+    const m = a.description?.match(/(?:class\s+)?([XMCBA])\d/i)
+    const l = m ? m[1].toUpperCase() : null
+    if (l) classCounts[l] = (classCounts[l] || 0) + 1
   })
 
   const chartData = Object.entries(classCounts)
     .map(([name, count]) => ({ name, count, color: FLARE_COLORS[name] || '#94a3b8' }))
     .sort((a, b) => (FLARE_ORDER[a.name] ?? 9) - (FLARE_ORDER[b.name] ?? 9))
 
-  const hasXorM = solarAlerts.some(a => {
-    const m = a.description?.match(/class\s+([XM])/i)
-    return !!m
-  })
+  const hasXorM = solarAlerts.some(a =>
+    /(?:class\s+)?[XM]\d/i.test(a.description || '')
+  )
 
   return (
     <div

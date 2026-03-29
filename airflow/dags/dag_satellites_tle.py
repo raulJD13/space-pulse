@@ -120,12 +120,19 @@ def satellite_pipeline():
 
         producer.close()
 
-    # Flujo: Extract → Compute → Detect → Save + Alert en paralelo
+    @task()
+    def insert_to_clickhouse(results: list) -> int:
+        """Inserta observaciones de satélites en ClickHouse (satellite_observations + space_alerts)."""
+        from ingestion.clickhouse_inserter import insert_satellite_observations
+        return insert_satellite_observations(results)
+
+    # Flujo: Extract → Compute → Detect → Save + Alert + Insert en paralelo
     sats = extract_tle_data()
     orbital = compute_orbital_params(sats)
     detected = detect_anomalies(orbital)
     save_to_minio(detected)
     alert_anomalies(detected)
+    insert_to_clickhouse(detected)
 
 
 dag_instance = satellite_pipeline()

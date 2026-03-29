@@ -1,6 +1,12 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Globe, X } from 'lucide-react'
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
+
+// Natural Earth TopoJSON via jsdelivr CDN (no API key required).
+// Uses equirectangular projection (scale 127) so dot positions
+// (x = (lon+180)/360*100%, y = (90-lat)/180*100%) stay aligned with the map.
+const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
 const CAT_COLORS = {
   'Wildfires':        '#ff4400',
@@ -14,6 +20,10 @@ const CAT_COLORS = {
 
 const TIME_OPTIONS = ['All', '24h', '7d']
 
+// Projection config: equirectangular, scale=127 maps the full globe to 800×400
+// so percentage-based dot overlays (equirectangular math) line up exactly.
+const PROJ_CONFIG = { scale: 127, center: [0, 0] }
+
 function isCritical(cat) {
   return cat === 'Wildfires' || cat === 'Volcanoes' || cat === 'Severe Storms'
 }
@@ -23,64 +33,17 @@ function withinHours(dateStr, hours) {
   return (Date.now() - new Date(dateStr).getTime()) < hours * 3600 * 1000
 }
 
-// Equirectangular projection: x = lon + 180 (0–360), y = 90 - lat (0–180)
-// viewBox="0 0 360 180"
-const CONTINENTS = [
-  {
-    id: 'greenland',
-    d: 'M 127,23 L 137,12 L 152,11 L 163,20 L 161,32 L 148,36 L 130,32 Z',
-  },
-  {
-    id: 'namerica',
-    d: 'M 18,30 L 42,24 L 55,36 L 56,53 L 64,62 L 70,68 L 93,74 L 100,66 L 110,48 L 120,44 L 116,32 L 90,18 L 55,16 L 24,22 Z',
-  },
-  {
-    id: 'samerica',
-    d: 'M 104,82 L 120,79 L 146,94 L 148,108 L 140,116 L 130,132 L 120,142 L 110,144 L 106,126 L 100,94 Z',
-  },
-  {
-    id: 'europe',
-    d: 'M 172,54 L 177,47 L 186,40 L 196,26 L 208,18 L 214,24 L 208,32 L 204,42 L 218,54 L 205,58 L 195,56 L 175,58 Z',
-  },
-  {
-    id: 'africa',
-    d: 'M 167,56 L 184,52 L 196,59 L 215,61 L 232,79 L 222,96 L 202,128 L 192,119 L 182,90 L 164,76 Z',
-  },
-  {
-    id: 'asia',
-    d: 'M 224,49 L 242,23 L 302,18 L 354,24 L 323,35 L 312,43 L 323,55 L 308,54 L 302,62 L 286,90 L 263,84 L 240,70 L 235,59 Z',
-  },
-  {
-    id: 'arabia',
-    d: 'M 218,61 L 235,59 L 244,72 L 240,82 L 226,84 L 218,74 Z',
-  },
-  {
-    id: 'india',
-    d: 'M 244,70 L 262,62 L 274,70 L 272,88 L 263,96 L 249,84 Z',
-  },
-  {
-    id: 'seasia_pen',
-    d: 'M 281,76 L 291,70 L 299,80 L 297,94 L 284,98 L 280,87 Z',
-  },
-  {
-    id: 'australia',
-    d: 'M 294,114 L 314,103 L 328,103 L 333,126 L 316,132 L 296,126 Z',
-  },
-  {
-    id: 'nz',
-    d: 'M 349,135 L 355,129 L 362,139 L 355,148 L 349,142 Z',
-  },
-  {
-    id: 'antarctica',
-    d: 'M 0,163 L 45,159 L 105,161 L 165,156 L 225,160 L 285,158 L 330,161 L 360,163 L 360,180 L 0,180 Z',
-  },
-]
 
 export default function EarthGlobe({ events }) {
-  const allWithCoords = useMemo(
-    () => (events || []).filter(e => e.latitude != null && e.longitude != null),
-    [events]
-  )
+  const allWithCoords = useMemo(() => {
+    const seen = new Set()
+    return (events || []).filter(e => {
+      if (e.latitude == null || e.longitude == null) return false
+      if (e.event_id && seen.has(e.event_id)) return false
+      if (e.event_id) seen.add(e.event_id)
+      return true
+    })
+  }, [events])
 
   const allCategories = useMemo(() => {
     const s = new Set(allWithCoords.map(e => e.category || 'Unknown'))
@@ -213,44 +176,57 @@ export default function EarthGlobe({ events }) {
           boxShadow: 'inset 0 0 80px rgba(0,15,45,0.6)',
         }}
       >
-        {/* World map SVG */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 360 180"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
+        {/* Real world map — Natural Earth TopoJSON via react-simple-maps */}
+        <ComposableMap
+          width={800}
+          height={400}
+          projection="geoEquirectangular"
+          projectionConfig={PROJ_CONFIG}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         >
-          {/* Latitude grid lines */}
+          <Geographies geography={GEO_URL}>
+            {({ geographies }) =>
+              geographies.map(geo => (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill="rgba(14, 46, 78, 0.72)"
+                  stroke="rgba(56, 189, 248, 0.32)"
+                  strokeWidth={0.3}
+                  style={{
+                    default: { outline: 'none' },
+                    hover:   { outline: 'none' },
+                    pressed: { outline: 'none' },
+                  }}
+                />
+              ))
+            }
+          </Geographies>
+        </ComposableMap>
+
+        {/* Grid lines overlay */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 800 400"
+          preserveAspectRatio="none"
+        >
           {[30, 60].map(lat => {
-            const yn = ((90 - lat) / 180) * 180
-            const ys = ((90 + lat) / 180) * 180
+            const yn = ((90 - lat) / 180) * 400
+            const ys = ((90 + lat) / 180) * 400
             return (
               <g key={lat}>
-                <line x1="0" y1={yn} x2="360" y2={yn} stroke="#1e3a5f" strokeWidth="0.3" strokeOpacity="0.7" />
-                <line x1="0" y1={ys} x2="360" y2={ys} stroke="#1e3a5f" strokeWidth="0.3" strokeOpacity="0.7" />
+                <line x1="0" y1={yn} x2="800" y2={yn} stroke="#1e3a5f" strokeWidth="0.6" strokeOpacity="0.7" />
+                <line x1="0" y1={ys} x2="800" y2={ys} stroke="#1e3a5f" strokeWidth="0.6" strokeOpacity="0.7" />
               </g>
             )
           })}
-          {/* Longitude grid lines */}
-          {[60, 120, 180, 240, 300].map(x => (
-            <line key={x} x1={x} y1="0" x2={x} y2="180" stroke="#1e3a5f" strokeWidth="0.3" strokeOpacity="0.7" />
+          {[60, 120, 180, 240, 300].map(lon => (
+            <line key={lon} x1={(lon / 360) * 800} y1="0" x2={(lon / 360) * 800} y2="400" stroke="#1e3a5f" strokeWidth="0.6" strokeOpacity="0.7" />
           ))}
           {/* Equator */}
-          <line x1="0" y1="90" x2="360" y2="90" stroke="#06b6d4" strokeWidth="0.7" strokeOpacity="0.3" />
+          <line x1="0" y1="200" x2="800" y2="200" stroke="#06b6d4" strokeWidth="1.4" strokeOpacity="0.3" />
           {/* Prime meridian */}
-          <line x1="180" y1="0" x2="180" y2="180" stroke="#06b6d4" strokeWidth="0.4" strokeOpacity="0.18" />
-
-          {/* Continents */}
-          {CONTINENTS.map(c => (
-            <path
-              key={c.id}
-              d={c.d}
-              fill="rgba(14, 46, 78, 0.72)"
-              stroke="rgba(56, 189, 248, 0.32)"
-              strokeWidth="0.55"
-              strokeLinejoin="round"
-            />
-          ))}
+          <line x1="400" y1="0" x2="400" y2="400" stroke="#06b6d4" strokeWidth="0.8" strokeOpacity="0.18" />
         </svg>
 
         {/* Scan sweep line */}

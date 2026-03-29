@@ -137,6 +137,12 @@ export default function APOD() {
             Astronomy Picture of the Day
           </p>
 
+          {apod?.title && (
+            <p className="text-[12px] font-semibold text-slate-200 leading-snug">
+              {apod.title}
+            </p>
+          )}
+
           {apod ? (
             <div className="flex flex-wrap gap-1.5">
               {apod.date && (

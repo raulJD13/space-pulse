@@ -84,11 +84,18 @@ def earth_events_pipeline():
         storage.put_json("space-pulse-raw", path, images)
         return path
 
-    # Flujo: EONET y EPIC se ejecutan en paralelo
+    @task()
+    def insert_eonet_to_clickhouse(events: list) -> int:
+        """Inserta eventos EONET en ClickHouse (earth_events + space_alerts)."""
+        from ingestion.clickhouse_inserter import insert_earth_events
+        return insert_earth_events(events)
+
+    # Flujo: EONET y EPIC se ejecutan en paralelo; EONET también va a ClickHouse
     eonet_data = extract_eonet_events()
     epic_data = extract_epic_images()
     save_eonet_to_minio(eonet_data)
     save_epic_to_minio(epic_data)
+    insert_eonet_to_clickhouse(eonet_data)
 
 
 dag_instance = earth_events_pipeline()

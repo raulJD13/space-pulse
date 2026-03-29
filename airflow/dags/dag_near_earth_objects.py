@@ -35,22 +35,29 @@ def neo_pipeline():
     def save_to_minio(neos: list) -> str:
         """Guarda la lista de asteroides en el Data Lake."""
         from ingestion.minio_storage import MinIOStorage
-        
+
         storage = MinIOStorage(
             endpoint=os.environ.get("MINIO_ENDPOINT", "minio:9000"),
             access_key=os.environ.get("MINIO_ACCESS_KEY", "minioadmin"),
             secret_key=os.environ.get("MINIO_SECRET_KEY", "minioadmin123secure")
         )
-        
+
         now = datetime.now(timezone.utc)
         path = f"neows/{now.strftime('%Y/%m/%d/%H%M%S')}.json"
-        
+
         storage.put_json("space-pulse-raw", path, neos)
         return path
+
+    @task()
+    def insert_to_clickhouse(neos: list) -> int:
+        """Inserta asteroides en ClickHouse (neo_daily + space_alerts)."""
+        from ingestion.clickhouse_inserter import insert_neos
+        return insert_neos(neos)
 
     # Definir el flujo
     extracted_neos = extract_neos()
     save_to_minio(extracted_neos)
+    insert_to_clickhouse(extracted_neos)
 
 # Instanciar el DAG
 neo_dag = neo_pipeline()

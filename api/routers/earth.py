@@ -20,11 +20,23 @@ def get_earth_events(
 
     where_str = " AND ".join(where_clauses)
 
+    # Filter in a subquery *before* GROUP BY to avoid ClickHouse ILLEGAL_AGGREGATION
+    # errors caused by aliases clashing with WHERE column names.
     query = f"""
-        SELECT event_id, title, category, status,
-               latitude, longitude, event_date, source_url
-        FROM space_pulse.earth_events
-        WHERE {where_str}
+        SELECT
+            event_id,
+            any(title)      AS title,
+            any(category)   AS category,
+            any(status)     AS status,
+            any(latitude)   AS latitude,
+            any(longitude)  AS longitude,
+            max(event_date) AS event_date,
+            any(source_url) AS source_url
+        FROM (
+            SELECT * FROM space_pulse.earth_events
+            WHERE {where_str}
+        )
+        GROUP BY event_id
         ORDER BY event_date DESC
         LIMIT {limit}
     """

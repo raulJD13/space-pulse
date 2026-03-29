@@ -60,9 +60,16 @@ def mars_weather_pipeline():
         storage.put_json("space-pulse-raw", path, extracted)
         return path
 
+    @task()
+    def insert_to_clickhouse(extracted: dict) -> int:
+        """Inserta datos meteorológicos de Marte en ClickHouse."""
+        from ingestion.clickhouse_inserter import insert_mars_weather
+        return insert_mars_weather(extracted.get("sols", []))
+
     # Flujo
     mars_data = extract_mars_weather()
     save_to_minio(mars_data)
+    insert_to_clickhouse(mars_data)
 
 
 dag_instance = mars_weather_pipeline()
