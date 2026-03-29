@@ -59,7 +59,7 @@ export default function SystemStatusBar({ summary, data, lastUpdated }) {
             <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-glow-pulse" />
           </div>
           <span className="text-[11px] font-black tracking-[0.18em] text-slate-200 uppercase">
-            Space Pulse
+            🛰️ Space Pulse
           </span>
           <span className="hidden sm:block text-[9px] text-slate-600 tracking-wider font-medium">
             Mission Control
