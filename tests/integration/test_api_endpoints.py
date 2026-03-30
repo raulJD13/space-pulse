@@ -215,17 +215,23 @@ def test_apod_url_is_string(client):
 def test_apod_served_from_clickhouse_not_nasa(client):
     """APOD must be served from ClickHouse (populated by Airflow) rather than
     the NASA API so that 429 rate-limit errors are never surfaced to clients.
-    Two rapid consecutive requests must both succeed (second from cache)."""
+    Two rapid consecutive requests must both succeed (second from in-memory cache)."""
     r1 = client.get("/apod/")
     r2 = client.get("/apod/")
-    assert r1.status_code == 200, "First APOD request failed"
-    assert r2.status_code == 200, "Second APOD request failed — cache may be broken"
-    # Both responses should have the same title (same data source)
-    assert r1.json().get("title") == r2.json().get("title")
+    assert r1.status_code == 200, "First APOD request failed — ClickHouse may be empty"
+    assert r2.status_code == 200, "Second APOD request failed — in-memory cache may be broken"
+    assert r1.json().get("title") == r2.json().get("title"), "Inconsistent title across requests"
 
 
 def test_apod_title_non_empty(client):
-    """Title must be a non-empty string — required for APOD card rendering."""
+    """Title must be a non-empty string — required for APOD card overlay and metadata."""
     data = client.get("/apod/").json()
     title = data.get("title", "")
     assert isinstance(title, str) and len(title) > 0, "APOD title is empty or missing"
+
+
+def test_apod_explanation_present(client):
+    """Explanation/description must be present — now rendered in the APOD card."""
+    data = client.get("/apod/").json()
+    explanation = data.get("explanation", "")
+    assert isinstance(explanation, str) and len(explanation) > 0, "APOD explanation missing"

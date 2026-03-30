@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   fetchSummary, fetchAlerts, fetchNeos,
-  fetchEarthEvents, fetchMarsWeather, fetchSatellites
+  fetchEarthEvents, fetchMarsWeather, fetchSatellites, fetchApod
 } from '../api/spaceApi'
 
 const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL_MS || '300000') // 5 min
@@ -15,6 +15,7 @@ export function useSpacePulse() {
     earthEvents: [],
     marsWeather: null,
     satellites: [],
+    apod: null,
     loading: true,
     lastUpdated: null,
     error: null,
@@ -28,6 +29,7 @@ export function useSpacePulse() {
       fetchEarthEvents({ status: 'open', limit: 50 }),
       fetchMarsWeather(),
       fetchSatellites({ anomalous_only: true, limit: 20 }),
+      fetchApod(),
     ])
 
     const allFailed = results.every(r => r.status === 'rejected')
@@ -40,7 +42,7 @@ export function useSpacePulse() {
       return
     }
 
-    const [summary, alerts, neos, earthEvents, marsWeather, satellites] = results.map(
+    const [summary, alerts, neos, earthEvents, marsWeather, satellites, apod] = results.map(
       r => r.status === 'fulfilled' ? r.value : null
     )
 
@@ -52,6 +54,7 @@ export function useSpacePulse() {
       earthEvents: earthEvents ?? prev.earthEvents,
       marsWeather: marsWeather ?? prev.marsWeather,
       satellites: satellites ?? prev.satellites,
+      apod: apod ?? prev.apod,
       loading: false,
       lastUpdated: new Date(),
       error: null,

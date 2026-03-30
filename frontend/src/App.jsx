@@ -99,7 +99,7 @@ function ErrorScreen({ message, onRetry }) {
 export default function App() {
   const {
     summary, alerts, neos, earthEvents,
-    marsWeather, satellites, loading, lastUpdated, error, refetch,
+    marsWeather, satellites, apod, loading, lastUpdated, error, refetch,
   } = useSpacePulse()
 
   const sourceData = {
@@ -108,7 +108,7 @@ export default function App() {
     earthEvents,
     marsWeather,
     satellites,
-    apod: null,
+    apod,
   }
 
   return (
@@ -173,7 +173,7 @@ export default function App() {
                   initial="hidden"
                   animate="show"
                 >
-                  <motion.div variants={cardVariants}><APOD /></motion.div>
+                  <motion.div variants={cardVariants}><APOD apod={apod} /></motion.div>
                   <motion.div variants={cardVariants}><MarsWeather data={marsWeather} /></motion.div>
                   <motion.div variants={cardVariants}><SatelliteAlert satellites={satellites} /></motion.div>
                 </motion.div>

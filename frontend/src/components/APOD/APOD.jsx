@@ -1,15 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Camera, PlayCircle, ExternalLink, Calendar, User } from 'lucide-react'
-import { fetchApod } from '../../api/spaceApi'
 
-export default function APOD() {
-  const [apod, setApod] = useState(null)
+export default function APOD({ apod }) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const cardRef = useRef()
-
-  useEffect(() => {
-    fetchApod().then(setApod).catch(() => {})
-  }, [])
 
   const onMove = (e) => {
     const r = cardRef.current?.getBoundingClientRect()
@@ -24,7 +18,7 @@ export default function APOD() {
   const isResting = tilt.x === 0 && tilt.y === 0
 
   const imgUrl = apod
-    ? (apod.media_type === 'video' ? (apod.thumbnail_url || '') : apod.url)
+    ? (apod.media_type === 'video' ? (apod.thumbnail_url || '') : (apod.url || ''))
     : null
 
   return (
@@ -118,12 +112,20 @@ export default function APOD() {
                 </div>
               )}
             </>
-          ) : (
+          ) : apod ? (
+            /* apod loaded but no image URL (video without thumbnail) */
             <div
               className="w-full h-full flex flex-col items-center justify-center gap-2"
-              style={{
-                background: 'linear-gradient(135deg, rgba(88,28,135,0.22), rgba(30,64,175,0.16))',
-              }}
+              style={{ background: 'linear-gradient(135deg, rgba(88,28,135,0.22), rgba(30,64,175,0.16))' }}
+            >
+              <Camera size={26} className="text-violet-400/35" />
+              <p className="text-[9px] text-slate-600 tracking-[0.2em] uppercase">No preview</p>
+            </div>
+          ) : (
+            /* loading / unavailable */
+            <div
+              className="w-full h-full flex flex-col items-center justify-center gap-2"
+              style={{ background: 'linear-gradient(135deg, rgba(88,28,135,0.22), rgba(30,64,175,0.16))' }}
             >
               <Camera size={26} className="text-violet-400/35 animate-pulse" />
               <p className="text-[9px] text-slate-700 tracking-[0.2em] uppercase">Loading</p>
@@ -140,6 +142,12 @@ export default function APOD() {
           {apod?.title && (
             <p className="text-[12px] font-semibold text-slate-200 leading-snug">
               {apod.title}
+            </p>
+          )}
+
+          {apod?.explanation && (
+            <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-3">
+              {apod.explanation}
             </p>
           )}
 
