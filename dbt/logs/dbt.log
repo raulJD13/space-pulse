@@ -8388,3 +8388,1621 @@ EXCHANGE TABLES `space_pulse_dev_marts`.`mart_daily_summary__dbt_backup` AND `sp
 [0m15:29:48.233357 [debug] [MainThread]: Command `dbt run` succeeded at 15:29:48.233297 after 0.75 seconds
 [0m15:29:48.233538 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10bf33aa0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10c3a0c80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10c9c72c0>]}
 [0m15:29:48.233719 [debug] [MainThread]: Flushing usage events
+[0m18:23:01.314402 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacefb990>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffad2a9d10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffad26dc10>]}
+
+
+============================== 18:23:01.367505 | 9410b714-f8b0-4e23-ad8b-c16ea09a3e2a ==============================
+[0m18:23:01.367505 [info ] [MainThread]: Running with dbt=1.7.19
+[0m18:23:01.369135 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'version_check': 'True', 'debug': 'False', 'log_path': '/dbt/logs', 'fail_fast': 'False', 'profiles_dir': '/dbt', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'invocation_command': 'dbt run --profiles-dir /dbt', 'log_format': 'default', 'static_parser': 'True', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m18:23:01.683508 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacdbf610>]}
+[0m18:23:01.735518 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacc43cd0>]}
+[0m18:23:01.736476 [info ] [MainThread]: Registered adapter: clickhouse=1.7.2
+[0m18:23:01.748438 [debug] [MainThread]: checksum: a8d43cdff37d0f32d7fbe4c5c25bea4bb6c86e162f8ce8fdb1a38cdcf7495431, vars: {}, profile: , target: , version: 1.7.19
+[0m18:23:01.767377 [info ] [MainThread]: Unable to do partial parsing because of a version mismatch
+[0m18:23:01.768268 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacc10750>]}
+[0m18:23:03.185657 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffaca89310>]}
+[0m18:23:03.207493 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacba4810>]}
+[0m18:23:03.208425 [info ] [MainThread]: Found 14 models, 6 sources, 0 exposures, 0 metrics, 421 macros, 0 groups, 0 semantic models
+[0m18:23:03.209452 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffac132910>]}
+[0m18:23:03.211374 [info ] [MainThread]: 
+[0m18:23:03.212124 [debug] [MainThread]: Acquiring new clickhouse connection 'master'
+[0m18:23:03.214087 [debug] [ThreadPool]: Acquiring new clickhouse connection 'list_'
+[0m18:23:03.221967 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m18:23:03.330842 [debug] [ThreadPool]: dbt_clickhouse adapter: On list_: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list_"} */
+
+    select name from system.databases
+  ...
+[0m18:23:03.333264 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.336728 [debug] [ThreadPool]: dbt_clickhouse adapter: On list_: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list_"} */
+
+    select name from system.databases
+  ...
+[0m18:23:03.338393 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.340636 [debug] [ThreadPool]: dbt_clickhouse adapter: On list_: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list_"} */
+
+    select name from system.databases
+  ...
+[0m18:23:03.342464 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.348184 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_, now list__space_pulse_dev_marts)
+[0m18:23:03.353583 [debug] [ThreadPool]: dbt_clickhouse adapter: On list__space_pulse_dev_marts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list__space_pulse_dev_marts"} */
+select
+      t.name as name,
+      t.database as schema,
+      if(engine not in ('MaterializedView', 'View'), 'table', 'view') as type,
+      db.engine as db_engine,0 as is_on_cluster
+          from system.tables as t join system.databases as db on t.database = db.name
+        where schema = 'space_pulse_dev_marts'
+      
+
+  ...
+[0m18:23:03.395403 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.04 seconds
+[0m18:23:03.402229 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list__space_pulse_dev_marts, now list__space_pulse_dev_intermediate)
+[0m18:23:03.413584 [debug] [ThreadPool]: dbt_clickhouse adapter: On list__space_pulse_dev_intermediate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list__space_pulse_dev_intermediate"} */
+select
+      t.name as name,
+      t.database as schema,
+      if(engine not in ('MaterializedView', 'View'), 'table', 'view') as type,
+      db.engine as db_engine,0 as is_on_cluster
+          from system.tables as t join system.databases as db on t.database = db.name
+        where schema = 'space_pulse_dev_intermediate'
+      
+
+  ...
+[0m18:23:03.416531 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.417711 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list__space_pulse_dev_intermediate, now list__space_pulse_dev_staging)
+[0m18:23:03.419458 [debug] [ThreadPool]: dbt_clickhouse adapter: On list__space_pulse_dev_staging: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "connection_name": "list__space_pulse_dev_staging"} */
+select
+      t.name as name,
+      t.database as schema,
+      if(engine not in ('MaterializedView', 'View'), 'table', 'view') as type,
+      db.engine as db_engine,0 as is_on_cluster
+          from system.tables as t join system.databases as db on t.database = db.name
+        where schema = 'space_pulse_dev_staging'
+      
+
+  ...
+[0m18:23:03.422553 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.424485 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffac13ecd0>]}
+[0m18:23:03.425148 [info ] [MainThread]: Concurrency: 1 threads (target='dev')
+[0m18:23:03.425424 [info ] [MainThread]: 
+[0m18:23:03.436362 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_apod
+[0m18:23:03.436853 [info ] [Thread-1 (]: 1 of 14 START sql view model `space_pulse_dev_staging`.`stg_apod` .............. [RUN]
+[0m18:23:03.437492 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list__space_pulse_dev_staging, now model.space_pulse.stg_apod)
+[0m18:23:03.437863 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_apod
+[0m18:23:03.443153 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_apod"
+[0m18:23:03.445458 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_apod (compile): 18:23:03.438084 => 18:23:03.445270
+[0m18:23:03.445896 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_apod
+[0m18:23:03.465881 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_apod"
+[0m18:23:03.466888 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_apod__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_apod.sql
+-- Limpia datos de la Astronomy Picture of the Day
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`apod`
+),
+
+cleaned AS (
+    SELECT
+        date,
+        title,
+        explanation,
+        media_type,
+        url,
+        hdurl,
+        thumbnail_url,
+        copyright,
+        ingested_at
+    FROM raw
+    WHERE title IS NOT NULL AND title != ''
+)
+
+SELECT * FROM cleaned
+  )...
+[0m18:23:03.472468 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.476192 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_apod__dbt_backup` 
+  
+  ...
+[0m18:23:03.477141 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.477787 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+    rename table `space_pulse_dev_staging`.`stg_apod` to `space_pulse_dev_staging`.`stg_apod__dbt_backup` 
+  
+  ...
+[0m18:23:03.479495 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.481521 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_apod` 
+  
+  ...
+[0m18:23:03.482440 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.483002 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+    rename table `space_pulse_dev_staging`.`stg_apod__dbt_tmp` to `space_pulse_dev_staging`.`stg_apod` 
+  
+  ...
+[0m18:23:03.484326 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.500472 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_apod: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_apod"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_apod__dbt_backup` 
+  ...
+[0m18:23:03.501888 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.503109 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_apod (execute): 18:23:03.446141 => 18:23:03.502860
+[0m18:23:03.503656 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacaccf10>]}
+[0m18:23:03.504032 [info ] [Thread-1 (]: 1 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_apod` ......... [[32mOK[0m in 0.07s]
+[0m18:23:03.504474 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_apod
+[0m18:23:03.504738 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_earth_events
+[0m18:23:03.505147 [info ] [Thread-1 (]: 2 of 14 START sql view model `space_pulse_dev_staging`.`stg_earth_events` ...... [RUN]
+[0m18:23:03.505574 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_apod, now model.space_pulse.stg_earth_events)
+[0m18:23:03.505778 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_earth_events
+[0m18:23:03.507308 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_earth_events"
+[0m18:23:03.508351 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_earth_events (compile): 18:23:03.505922 => 18:23:03.508194
+[0m18:23:03.508612 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_earth_events
+[0m18:23:03.510796 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_earth_events"
+[0m18:23:03.511481 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_earth_events__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_earth_events.sql
+-- Limpia y tipifica eventos naturales de EONET
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`earth_events`
+),
+
+cleaned AS (
+    SELECT
+        event_id,
+        title,
+        category,
+        status,
+        latitude,
+        longitude,
+        event_date,
+        closed_date,
+        source_url,
+        ingested_at
+    FROM raw
+    WHERE event_id IS NOT NULL AND event_id != ''
+)
+
+SELECT * FROM cleaned
+  )...
+[0m18:23:03.514540 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.516403 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_earth_events__dbt_backup` 
+  
+  ...
+[0m18:23:03.517272 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.517981 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+    rename table `space_pulse_dev_staging`.`stg_earth_events` to `space_pulse_dev_staging`.`stg_earth_events__dbt_backup` 
+  
+  ...
+[0m18:23:03.518936 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.520587 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_earth_events` 
+  
+  ...
+[0m18:23:03.521512 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.522185 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+    rename table `space_pulse_dev_staging`.`stg_earth_events__dbt_tmp` to `space_pulse_dev_staging`.`stg_earth_events` 
+  
+  ...
+[0m18:23:03.523073 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.524822 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_earth_events: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_earth_events"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_earth_events__dbt_backup` 
+  ...
+[0m18:23:03.525706 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.526386 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_earth_events (execute): 18:23:03.508783 => 18:23:03.526310
+[0m18:23:03.526901 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa7290810>]}
+[0m18:23:03.527318 [info ] [Thread-1 (]: 2 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_earth_events` . [[32mOK[0m in 0.02s]
+[0m18:23:03.527648 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_earth_events
+[0m18:23:03.527875 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_mars_weather
+[0m18:23:03.528245 [info ] [Thread-1 (]: 3 of 14 START sql view model `space_pulse_dev_staging`.`stg_mars_weather` ...... [RUN]
+[0m18:23:03.528706 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_earth_events, now model.space_pulse.stg_mars_weather)
+[0m18:23:03.528944 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_mars_weather
+[0m18:23:03.530624 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_mars_weather"
+[0m18:23:03.531368 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_mars_weather (compile): 18:23:03.529065 => 18:23:03.531215
+[0m18:23:03.531584 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_mars_weather
+[0m18:23:03.533682 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_mars_weather"
+[0m18:23:03.534541 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_mars_weather__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_mars_weather.sql
+-- Limpia datos meteorológicos de Marte (InSight)
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`mars_weather`
+),
+
+cleaned AS (
+    SELECT
+        sol,
+        earth_date,
+        temp_avg_celsius,
+        temp_min_celsius,
+        temp_max_celsius,
+        wind_speed_avg_ms,
+        wind_direction_degrees,
+        pressure_pa,
+        season,
+        ingested_at
+    FROM raw
+    WHERE sol > 0
+)
+
+SELECT * FROM cleaned
+  )...
+[0m18:23:03.537578 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.540107 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_mars_weather__dbt_backup` 
+  
+  ...
+[0m18:23:03.540940 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.541506 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+    rename table `space_pulse_dev_staging`.`stg_mars_weather` to `space_pulse_dev_staging`.`stg_mars_weather__dbt_backup` 
+  
+  ...
+[0m18:23:03.542308 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.544185 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_mars_weather` 
+  
+  ...
+[0m18:23:03.545134 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.545802 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+    rename table `space_pulse_dev_staging`.`stg_mars_weather__dbt_tmp` to `space_pulse_dev_staging`.`stg_mars_weather` 
+  
+  ...
+[0m18:23:03.546624 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.548763 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_mars_weather: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_mars_weather"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_mars_weather__dbt_backup` 
+  ...
+[0m18:23:03.549833 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.550594 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_mars_weather (execute): 18:23:03.531739 => 18:23:03.550482
+[0m18:23:03.551026 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacce9c90>]}
+[0m18:23:03.551412 [info ] [Thread-1 (]: 3 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_mars_weather` . [[32mOK[0m in 0.02s]
+[0m18:23:03.551778 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_mars_weather
+[0m18:23:03.552011 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_near_earth_objects
+[0m18:23:03.552383 [info ] [Thread-1 (]: 4 of 14 START sql view model `space_pulse_dev_staging`.`stg_near_earth_objects`  [RUN]
+[0m18:23:03.553099 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_mars_weather, now model.space_pulse.stg_near_earth_objects)
+[0m18:23:03.553490 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_near_earth_objects
+[0m18:23:03.556146 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_near_earth_objects"
+[0m18:23:03.557335 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_near_earth_objects (compile): 18:23:03.553689 => 18:23:03.557074
+[0m18:23:03.557677 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_near_earth_objects
+[0m18:23:03.560229 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_near_earth_objects"
+[0m18:23:03.560920 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_near_earth_objects__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_near_earth_objects.sql
+-- Source: space_pulse.neo_daily (typed table populated by Airflow NeoWs DAG)
+-- Columns already cleaned and typed — no JSON parsing required.
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`neo_daily`
+),
+
+cleaned AS (
+    SELECT
+        neo_id,
+        neo_name,
+        diameter_max_km,
+        is_hazardous,
+        velocity_km_s,
+        miss_distance_lunar,
+        miss_distance_km,
+        close_approach_date,
+        ingested_at
+    FROM raw
+    WHERE neo_id IS NOT NULL AND neo_id != ''
+)
+
+SELECT * FROM cleaned
+  )...
+[0m18:23:03.569585 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.572089 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_near_earth_objects__dbt_backup` 
+  
+  ...
+[0m18:23:03.573871 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.574937 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+    rename table `space_pulse_dev_staging`.`stg_near_earth_objects` to `space_pulse_dev_staging`.`stg_near_earth_objects__dbt_backup` 
+  
+  ...
+[0m18:23:03.576384 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.578719 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_near_earth_objects` 
+  
+  ...
+[0m18:23:03.580054 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.580984 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+    rename table `space_pulse_dev_staging`.`stg_near_earth_objects__dbt_tmp` to `space_pulse_dev_staging`.`stg_near_earth_objects` 
+  
+  ...
+[0m18:23:03.582241 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.585399 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_near_earth_objects: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_near_earth_objects"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_near_earth_objects__dbt_backup` 
+  ...
+[0m18:23:03.590187 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.596411 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_near_earth_objects (execute): 18:23:03.557935 => 18:23:03.596280
+[0m18:23:03.599555 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa6706750>]}
+[0m18:23:03.603387 [info ] [Thread-1 (]: 4 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_near_earth_objects`  [[32mOK[0m in 0.05s]
+[0m18:23:03.604246 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_near_earth_objects
+[0m18:23:03.604729 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_satellites_tle
+[0m18:23:03.605997 [info ] [Thread-1 (]: 5 of 14 START sql view model `space_pulse_dev_staging`.`stg_satellites_tle` .... [RUN]
+[0m18:23:03.606627 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_near_earth_objects, now model.space_pulse.stg_satellites_tle)
+[0m18:23:03.607054 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_satellites_tle
+[0m18:23:03.608867 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_satellites_tle"
+[0m18:23:03.609931 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_satellites_tle (compile): 18:23:03.607228 => 18:23:03.609712
+[0m18:23:03.610189 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_satellites_tle
+[0m18:23:03.615882 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_satellites_tle"
+[0m18:23:03.617192 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_satellites_tle__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_satellites_tle.sql
+-- Limpia y tipifica observaciones orbitales de satélites
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`satellite_observations`
+),
+
+cleaned AS (
+    SELECT
+        satellite_id,
+        satellite_name,
+        timestamp,
+        altitude_km,
+        inclination_deg,
+        period_minutes,
+        mean_motion_rev_day,
+        eccentricity,
+        anomaly_score,
+        is_anomalous,
+        ingested_at
+    FROM raw
+    WHERE satellite_id IS NOT NULL AND satellite_id != ''
+      AND altitude_km > 0
+)
+
+SELECT * FROM cleaned
+  )...
+[0m18:23:03.621899 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.624021 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_satellites_tle__dbt_backup` 
+  
+  ...
+[0m18:23:03.625242 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.626027 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+    rename table `space_pulse_dev_staging`.`stg_satellites_tle` to `space_pulse_dev_staging`.`stg_satellites_tle__dbt_backup` 
+  
+  ...
+[0m18:23:03.627196 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.632188 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_satellites_tle` 
+  
+  ...
+[0m18:23:03.636630 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.640219 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+    rename table `space_pulse_dev_staging`.`stg_satellites_tle__dbt_tmp` to `space_pulse_dev_staging`.`stg_satellites_tle` 
+  
+  ...
+[0m18:23:03.644233 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.647054 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_satellites_tle: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_satellites_tle"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_satellites_tle__dbt_backup` 
+  ...
+[0m18:23:03.648223 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.649047 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_satellites_tle (execute): 18:23:03.610359 => 18:23:03.648950
+[0m18:23:03.649471 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffaccff650>]}
+[0m18:23:03.649810 [info ] [Thread-1 (]: 5 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_satellites_tle`  [[32mOK[0m in 0.04s]
+[0m18:23:03.650192 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_satellites_tle
+[0m18:23:03.650449 [debug] [Thread-1 (]: Began running node model.space_pulse.stg_solar_flares
+[0m18:23:03.650873 [info ] [Thread-1 (]: 6 of 14 START sql view model `space_pulse_dev_staging`.`stg_solar_flares` ...... [RUN]
+[0m18:23:03.651298 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_satellites_tle, now model.space_pulse.stg_solar_flares)
+[0m18:23:03.651490 [debug] [Thread-1 (]: Began compiling node model.space_pulse.stg_solar_flares
+[0m18:23:03.653134 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.stg_solar_flares"
+[0m18:23:03.654524 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_solar_flares (compile): 18:23:03.651646 => 18:23:03.654295
+[0m18:23:03.654803 [debug] [Thread-1 (]: Began executing node model.space_pulse.stg_solar_flares
+[0m18:23:03.657294 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.stg_solar_flares"
+[0m18:23:03.658055 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+
+  create view `space_pulse_dev_staging`.`stg_solar_flares__dbt_tmp` 
+  
+    
+    
+  as (
+    -- dbt/models/staging/stg_solar_flares.sql
+-- Source: space_pulse.solar_events (typed table populated by Airflow DONKI DAG)
+-- Filters to FLARE events only; maps column names to downstream expectations.
+
+WITH raw AS (
+    SELECT * FROM `space_pulse`.`solar_events`
+    WHERE event_type = 'FLARE'
+),
+
+cleaned AS (
+    SELECT
+        event_id                                        AS flare_id,
+        begin_time,
+        peak_time,
+        end_time,
+        class_type                                      AS flare_class,
+        LEFT(class_type, 1)                             AS flare_class_letter,
+        CAST(
+            if(
+                length(class_type) > 1,
+                SUBSTRING(class_type, 2),
+                '0.0'
+            ) AS Float32
+        )                                               AS flare_class_number,
+        source_location
+    FROM raw
+)
+
+SELECT * FROM cleaned
+WHERE flare_id != ''
+  )...
+[0m18:23:03.664285 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.666257 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_solar_flares__dbt_backup` 
+  
+  ...
+[0m18:23:03.667270 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.667952 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+    rename table `space_pulse_dev_staging`.`stg_solar_flares` to `space_pulse_dev_staging`.`stg_solar_flares__dbt_backup` 
+  
+  ...
+[0m18:23:03.668997 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.670828 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_solar_flares` 
+  
+  ...
+[0m18:23:03.671879 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.672582 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+    rename table `space_pulse_dev_staging`.`stg_solar_flares__dbt_tmp` to `space_pulse_dev_staging`.`stg_solar_flares` 
+  
+  ...
+[0m18:23:03.673514 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.675884 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.stg_solar_flares: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.stg_solar_flares"} */
+
+    drop table if exists `space_pulse_dev_staging`.`stg_solar_flares__dbt_backup` 
+  ...
+[0m18:23:03.676848 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.677630 [debug] [Thread-1 (]: Timing info for model.space_pulse.stg_solar_flares (execute): 18:23:03.655037 => 18:23:03.677527
+[0m18:23:03.678030 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa728df90>]}
+[0m18:23:03.678339 [info ] [Thread-1 (]: 6 of 14 OK created sql view model `space_pulse_dev_staging`.`stg_solar_flares` . [[32mOK[0m in 0.03s]
+[0m18:23:03.678655 [debug] [Thread-1 (]: Finished running node model.space_pulse.stg_solar_flares
+[0m18:23:03.678912 [debug] [Thread-1 (]: Began running node model.space_pulse.int_earth_event_severity
+[0m18:23:03.679251 [info ] [Thread-1 (]: 7 of 14 START sql table model `space_pulse_dev_intermediate`.`int_earth_event_severity`  [RUN]
+[0m18:23:03.679629 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.stg_solar_flares, now model.space_pulse.int_earth_event_severity)
+[0m18:23:03.679819 [debug] [Thread-1 (]: Began compiling node model.space_pulse.int_earth_event_severity
+[0m18:23:03.681221 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.int_earth_event_severity"
+[0m18:23:03.682043 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_earth_event_severity (compile): 18:23:03.679925 => 18:23:03.681942
+[0m18:23:03.682225 [debug] [Thread-1 (]: Began executing node model.space_pulse.int_earth_event_severity
+[0m18:23:03.708175 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_earth_event_severity: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_earth_event_severity"} */
+
+            
+
+    
+        create table `space_pulse_dev_intermediate`.`int_earth_event_severity__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/intermediate/int_earth_event_severity.sql
+-- Asigna severidad a eventos terrestres basándose en categoría y estado
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_earth_events`
+),
+
+classified AS (
+    SELECT
+        *,
+
+        -- Severidad basada en tipo de evento
+        CASE category
+            WHEN 'Wildfires' THEN 3
+            WHEN 'Volcanoes' THEN 4
+            WHEN 'Severe Storms' THEN 3
+            WHEN 'Earthquakes' THEN 4
+            WHEN 'Floods' THEN 3
+            WHEN 'Drought' THEN 2
+            WHEN 'Dust and Haze' THEN 1
+            WHEN 'Sea and Lake Ice' THEN 1
+            ELSE 2
+        END AS severity_numeric,
+
+        CASE category
+            WHEN 'Volcanoes' THEN 'HIGH'
+            WHEN 'Earthquakes' THEN 'HIGH'
+            WHEN 'Wildfires' THEN 'MEDIUM'
+            WHEN 'Severe Storms' THEN 'MEDIUM'
+            WHEN 'Floods' THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS severity_label
+
+    FROM staged
+    WHERE status = 'open'
+)
+
+SELECT * FROM classified
+ORDER BY severity_numeric DESC, event_date DESC
+          )
+        ...
+[0m18:23:03.714394 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.721353 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_earth_event_severity: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_earth_event_severity"} */
+
+    select name, type from system.columns where table = 'int_earth_event_severity__dbt_backup'
+    
+      and database = 'space_pulse_dev_intermediate'
+    
+    order by position
+  ...
+[0m18:23:03.724737 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.727127 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.int_earth_event_severity"
+[0m18:23:03.728346 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_earth_event_severity: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_earth_event_severity"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_intermediate`.`int_earth_event_severity__dbt_backup`
+        ("event_id", "title", "category", "status", "latitude", "longitude", "event_date", "closed_date", "source_url", "ingested_at", "severity_numeric", "severity_label")-- dbt/models/intermediate/int_earth_event_severity.sql
+-- Asigna severidad a eventos terrestres basándose en categoría y estado
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_earth_events`
+),
+
+classified AS (
+    SELECT
+        *,
+
+        -- Severidad basada en tipo de evento
+        CASE category
+            WHEN 'Wildfires' THEN 3
+            WHEN 'Volcanoes' THEN 4
+            WHEN 'Severe Storms' THEN 3
+            WHEN 'Earthquakes' THEN 4
+            WHEN 'Floods' THEN 3
+            WHEN 'Drought' THEN 2
+            WHEN 'Dust and Haze' THEN 1
+            WHEN 'Sea and Lake Ice' THEN 1
+            ELSE 2
+        END AS severity_numeric,
+
+        CASE category
+            WHEN 'Volcanoes' THEN 'HIGH'
+            WHEN 'Earthquakes' THEN 'HIGH'
+            WHEN 'Wildfires' THEN 'MEDIUM'
+            WHEN 'Severe Storms' THEN 'MEDIUM'
+            WHEN 'Floods' THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS severity_label
+
+    FROM staged
+    WHERE status = 'open'
+)
+
+SELECT * FROM classified
+ORDER BY severity_numeric DESC, event_date DESC
+  
+  ...
+[0m18:23:03.758153 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.03 seconds
+[0m18:23:03.761162 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_earth_event_severity: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_earth_event_severity"} */
+EXCHANGE TABLES `space_pulse_dev_intermediate`.`int_earth_event_severity__dbt_backup` AND `space_pulse_dev_intermediate`.`int_earth_event_severity` 
+  
+  ...
+[0m18:23:03.762326 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.764972 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_earth_event_severity: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_earth_event_severity"} */
+
+    drop table if exists `space_pulse_dev_intermediate`.`int_earth_event_severity__dbt_backup` 
+  ...
+[0m18:23:03.767323 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.768174 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_earth_event_severity (execute): 18:23:03.682348 => 18:23:03.768067
+[0m18:23:03.768659 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacc1f210>]}
+[0m18:23:03.769212 [info ] [Thread-1 (]: 7 of 14 OK created sql table model `space_pulse_dev_intermediate`.`int_earth_event_severity`  [[32mOK[0m in 0.09s]
+[0m18:23:03.769729 [debug] [Thread-1 (]: Finished running node model.space_pulse.int_earth_event_severity
+[0m18:23:03.770147 [debug] [Thread-1 (]: Began running node model.space_pulse.mart_mars_climate
+[0m18:23:03.770591 [info ] [Thread-1 (]: 8 of 14 START sql table model `space_pulse_dev_marts`.`mart_mars_climate` ...... [RUN]
+[0m18:23:03.771155 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.int_earth_event_severity, now model.space_pulse.mart_mars_climate)
+[0m18:23:03.771453 [debug] [Thread-1 (]: Began compiling node model.space_pulse.mart_mars_climate
+[0m18:23:03.773358 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.mart_mars_climate"
+[0m18:23:03.774345 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_mars_climate (compile): 18:23:03.771784 => 18:23:03.774207
+[0m18:23:03.774558 [debug] [Thread-1 (]: Began executing node model.space_pulse.mart_mars_climate
+[0m18:23:03.776998 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_mars_climate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_mars_climate"} */
+
+            
+
+    
+        create table `space_pulse_dev_marts`.`mart_mars_climate__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/marts/mart_mars_climate.sql
+-- Series temporales de clima marciano para el dashboard
+
+
+
+SELECT
+    sol,
+    earth_date,
+    temp_avg_celsius,
+    temp_min_celsius,
+    temp_max_celsius,
+    wind_speed_avg_ms,
+    wind_direction_degrees,
+    pressure_pa,
+    season
+FROM `space_pulse_dev_staging`.`stg_mars_weather`
+ORDER BY earth_date DESC
+          )
+        ...
+[0m18:23:03.780928 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.783373 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_mars_climate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_mars_climate"} */
+
+    select name, type from system.columns where table = 'mart_mars_climate__dbt_backup'
+    
+      and database = 'space_pulse_dev_marts'
+    
+    order by position
+  ...
+[0m18:23:03.787128 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.789041 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.mart_mars_climate"
+[0m18:23:03.790734 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_mars_climate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_mars_climate"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_marts`.`mart_mars_climate__dbt_backup`
+        ("sol", "earth_date", "temp_avg_celsius", "temp_min_celsius", "temp_max_celsius", "wind_speed_avg_ms", "wind_direction_degrees", "pressure_pa", "season")-- dbt/models/marts/mart_mars_climate.sql
+-- Series temporales de clima marciano para el dashboard
+
+
+
+SELECT
+    sol,
+    earth_date,
+    temp_avg_celsius,
+    temp_min_celsius,
+    temp_max_celsius,
+    wind_speed_avg_ms,
+    wind_direction_degrees,
+    pressure_pa,
+    season
+FROM `space_pulse_dev_staging`.`stg_mars_weather`
+ORDER BY earth_date DESC
+  
+  ...
+[0m18:23:03.802753 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.808887 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_mars_climate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_mars_climate"} */
+EXCHANGE TABLES `space_pulse_dev_marts`.`mart_mars_climate__dbt_backup` AND `space_pulse_dev_marts`.`mart_mars_climate` 
+  
+  ...
+[0m18:23:03.811072 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.816477 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_mars_climate: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_mars_climate"} */
+
+    drop table if exists `space_pulse_dev_marts`.`mart_mars_climate__dbt_backup` 
+  ...
+[0m18:23:03.818090 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.819457 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_mars_climate (execute): 18:23:03.774663 => 18:23:03.819344
+[0m18:23:03.820739 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa676ea10>]}
+[0m18:23:03.821603 [info ] [Thread-1 (]: 8 of 14 OK created sql table model `space_pulse_dev_marts`.`mart_mars_climate` . [[32mOK[0m in 0.05s]
+[0m18:23:03.822464 [debug] [Thread-1 (]: Finished running node model.space_pulse.mart_mars_climate
+[0m18:23:03.822913 [debug] [Thread-1 (]: Began running node model.space_pulse.int_neo_risk_score
+[0m18:23:03.823293 [info ] [Thread-1 (]: 9 of 14 START sql table model `space_pulse_dev_intermediate`.`int_neo_risk_score`  [RUN]
+[0m18:23:03.823808 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.mart_mars_climate, now model.space_pulse.int_neo_risk_score)
+[0m18:23:03.824016 [debug] [Thread-1 (]: Began compiling node model.space_pulse.int_neo_risk_score
+[0m18:23:03.826546 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.int_neo_risk_score"
+[0m18:23:03.828203 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_neo_risk_score (compile): 18:23:03.824177 => 18:23:03.828037
+[0m18:23:03.828549 [debug] [Thread-1 (]: Began executing node model.space_pulse.int_neo_risk_score
+[0m18:23:03.831967 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_neo_risk_score: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_neo_risk_score"} */
+
+            
+
+    
+        create table `space_pulse_dev_intermediate`.`int_neo_risk_score__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/intermediate/int_neo_risk_score.sql
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_near_earth_objects`
+),
+
+scored AS (
+    SELECT
+        *,
+        
+        -- FÓRMULA DE RIESGO:
+        -- Numerador: masa estimada (volumen) * velocidad 
+        -- Denominador: distancia en unidades lunares
+        -- Usamos GREATEST(..., 0.1) para evitar dividir por cero si pasara rozando
+        ROUND(
+            (POW(diameter_max_km, 3) * velocity_km_s) 
+            / GREATEST(miss_distance_lunar, 0.1),
+            6
+        ) AS risk_score,
+        
+        -- Clasificación del nivel de riesgo
+        CASE
+            WHEN is_hazardous = true AND miss_distance_lunar < 5 THEN 'CRITICAL'
+            WHEN (POW(diameter_max_km, 3) * velocity_km_s) / GREATEST(miss_distance_lunar, 0.1) > 10 THEN 'HIGH'
+            WHEN (POW(diameter_max_km, 3) * velocity_km_s) / GREATEST(miss_distance_lunar, 0.1) > 1  THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS risk_level,
+        
+        -- Calculamos cuántos días faltan para el acercamiento
+        dateDiff('day', today(), close_approach_date) AS days_until_approach
+        
+    FROM staged
+    WHERE close_approach_date >= today() -- Solo nos importan los que están por venir
+    ORDER BY risk_score DESC
+)
+
+SELECT * FROM scored
+          )
+        ...
+[0m18:23:03.888115 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.06 seconds
+[0m18:23:03.894203 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_neo_risk_score: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_neo_risk_score"} */
+
+    select name, type from system.columns where table = 'int_neo_risk_score__dbt_backup'
+    
+      and database = 'space_pulse_dev_intermediate'
+    
+    order by position
+  ...
+[0m18:23:03.905136 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.907582 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.int_neo_risk_score"
+[0m18:23:03.910451 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_neo_risk_score: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_neo_risk_score"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_intermediate`.`int_neo_risk_score__dbt_backup`
+        ("neo_id", "neo_name", "diameter_max_km", "is_hazardous", "velocity_km_s", "miss_distance_lunar", "miss_distance_km", "close_approach_date", "ingested_at", "risk_score", "risk_level", "days_until_approach")-- dbt/models/intermediate/int_neo_risk_score.sql
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_near_earth_objects`
+),
+
+scored AS (
+    SELECT
+        *,
+        
+        -- FÓRMULA DE RIESGO:
+        -- Numerador: masa estimada (volumen) * velocidad 
+        -- Denominador: distancia en unidades lunares
+        -- Usamos GREATEST(..., 0.1) para evitar dividir por cero si pasara rozando
+        ROUND(
+            (POW(diameter_max_km, 3) * velocity_km_s) 
+            / GREATEST(miss_distance_lunar, 0.1),
+            6
+        ) AS risk_score,
+        
+        -- Clasificación del nivel de riesgo
+        CASE
+            WHEN is_hazardous = true AND miss_distance_lunar < 5 THEN 'CRITICAL'
+            WHEN (POW(diameter_max_km, 3) * velocity_km_s) / GREATEST(miss_distance_lunar, 0.1) > 10 THEN 'HIGH'
+            WHEN (POW(diameter_max_km, 3) * velocity_km_s) / GREATEST(miss_distance_lunar, 0.1) > 1  THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS risk_level,
+        
+        -- Calculamos cuántos días faltan para el acercamiento
+        dateDiff('day', today(), close_approach_date) AS days_until_approach
+        
+    FROM staged
+    WHERE close_approach_date >= today() -- Solo nos importan los que están por venir
+    ORDER BY risk_score DESC
+)
+
+SELECT * FROM scored
+  
+  ...
+[0m18:23:03.930996 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.02 seconds
+[0m18:23:03.933455 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_neo_risk_score: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_neo_risk_score"} */
+EXCHANGE TABLES `space_pulse_dev_intermediate`.`int_neo_risk_score__dbt_backup` AND `space_pulse_dev_intermediate`.`int_neo_risk_score` 
+  
+  ...
+[0m18:23:03.935670 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.944067 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_neo_risk_score: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_neo_risk_score"} */
+
+    drop table if exists `space_pulse_dev_intermediate`.`int_neo_risk_score__dbt_backup` 
+  ...
+[0m18:23:03.946454 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.947952 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_neo_risk_score (execute): 18:23:03.829061 => 18:23:03.947714
+[0m18:23:03.948743 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacae4590>]}
+[0m18:23:03.949351 [info ] [Thread-1 (]: 9 of 14 OK created sql table model `space_pulse_dev_intermediate`.`int_neo_risk_score`  [[32mOK[0m in 0.13s]
+[0m18:23:03.949890 [debug] [Thread-1 (]: Finished running node model.space_pulse.int_neo_risk_score
+[0m18:23:03.950238 [debug] [Thread-1 (]: Began running node model.space_pulse.int_satellite_anomalies
+[0m18:23:03.950747 [info ] [Thread-1 (]: 10 of 14 START sql table model `space_pulse_dev_intermediate`.`int_satellite_anomalies`  [RUN]
+[0m18:23:03.951394 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.int_neo_risk_score, now model.space_pulse.int_satellite_anomalies)
+[0m18:23:03.951660 [debug] [Thread-1 (]: Began compiling node model.space_pulse.int_satellite_anomalies
+[0m18:23:03.954201 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.int_satellite_anomalies"
+[0m18:23:03.956708 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_satellite_anomalies (compile): 18:23:03.951848 => 18:23:03.956054
+[0m18:23:03.957148 [debug] [Thread-1 (]: Began executing node model.space_pulse.int_satellite_anomalies
+[0m18:23:03.963262 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_satellite_anomalies: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_satellite_anomalies"} */
+
+            
+
+    
+        create table `space_pulse_dev_intermediate`.`int_satellite_anomalies__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/intermediate/int_satellite_anomalies.sql
+-- Filtra y enriquece satélites con anomalías detectadas por ML
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_satellites_tle`
+),
+
+anomalous AS (
+    SELECT
+        satellite_id,
+        satellite_name,
+        timestamp AS detected_at,
+        altitude_km,
+        inclination_deg,
+        period_minutes,
+        mean_motion_rev_day,
+        anomaly_score,
+        is_anomalous,
+
+        -- Clasificar tipo de anomalía según parámetros
+        CASE
+            WHEN altitude_km < 200 THEN 'ORBITAL_DECAY'
+            WHEN altitude_km > 2000 THEN 'HIGH_ORBIT_DEVIATION'
+            WHEN abs(anomaly_score) > 0.6 THEN 'SEVERE_DEVIATION'
+            ELSE 'MINOR_DEVIATION'
+        END AS anomaly_type,
+
+        ingested_at
+
+    FROM staged
+    WHERE is_anomalous = true
+)
+
+SELECT * FROM anomalous
+ORDER BY detected_at DESC
+          )
+        ...
+[0m18:23:03.971318 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.977181 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_satellite_anomalies: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_satellite_anomalies"} */
+
+    select name, type from system.columns where table = 'int_satellite_anomalies__dbt_backup'
+    
+      and database = 'space_pulse_dev_intermediate'
+    
+    order by position
+  ...
+[0m18:23:03.981418 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:03.983036 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.int_satellite_anomalies"
+[0m18:23:03.984139 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_satellite_anomalies: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_satellite_anomalies"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_intermediate`.`int_satellite_anomalies__dbt_backup`
+        ("satellite_id", "satellite_name", "detected_at", "altitude_km", "inclination_deg", "period_minutes", "mean_motion_rev_day", "anomaly_score", "is_anomalous", "anomaly_type", "ingested_at")-- dbt/models/intermediate/int_satellite_anomalies.sql
+-- Filtra y enriquece satélites con anomalías detectadas por ML
+
+WITH staged AS (
+    SELECT * FROM `space_pulse_dev_staging`.`stg_satellites_tle`
+),
+
+anomalous AS (
+    SELECT
+        satellite_id,
+        satellite_name,
+        timestamp AS detected_at,
+        altitude_km,
+        inclination_deg,
+        period_minutes,
+        mean_motion_rev_day,
+        anomaly_score,
+        is_anomalous,
+
+        -- Clasificar tipo de anomalía según parámetros
+        CASE
+            WHEN altitude_km < 200 THEN 'ORBITAL_DECAY'
+            WHEN altitude_km > 2000 THEN 'HIGH_ORBIT_DEVIATION'
+            WHEN abs(anomaly_score) > 0.6 THEN 'SEVERE_DEVIATION'
+            ELSE 'MINOR_DEVIATION'
+        END AS anomaly_type,
+
+        ingested_at
+
+    FROM staged
+    WHERE is_anomalous = true
+)
+
+SELECT * FROM anomalous
+ORDER BY detected_at DESC
+  
+  ...
+[0m18:23:03.998254 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:03.999248 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_satellite_anomalies: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_satellite_anomalies"} */
+EXCHANGE TABLES `space_pulse_dev_intermediate`.`int_satellite_anomalies__dbt_backup` AND `space_pulse_dev_intermediate`.`int_satellite_anomalies` 
+  
+  ...
+[0m18:23:04.000812 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.007175 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_satellite_anomalies: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_satellite_anomalies"} */
+
+    drop table if exists `space_pulse_dev_intermediate`.`int_satellite_anomalies__dbt_backup` 
+  ...
+[0m18:23:04.008689 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.009708 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_satellite_anomalies (execute): 18:23:03.957349 => 18:23:04.009592
+[0m18:23:04.010263 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa679c310>]}
+[0m18:23:04.010674 [info ] [Thread-1 (]: 10 of 14 OK created sql table model `space_pulse_dev_intermediate`.`int_satellite_anomalies`  [[32mOK[0m in 0.06s]
+[0m18:23:04.011122 [debug] [Thread-1 (]: Finished running node model.space_pulse.int_satellite_anomalies
+[0m18:23:04.011390 [debug] [Thread-1 (]: Began running node model.space_pulse.int_solar_storm_level
+[0m18:23:04.011699 [info ] [Thread-1 (]: 11 of 14 START sql table model `space_pulse_dev_intermediate`.`int_solar_storm_level`  [RUN]
+[0m18:23:04.012211 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.int_satellite_anomalies, now model.space_pulse.int_solar_storm_level)
+[0m18:23:04.012492 [debug] [Thread-1 (]: Began compiling node model.space_pulse.int_solar_storm_level
+[0m18:23:04.014376 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.int_solar_storm_level"
+[0m18:23:04.015224 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_solar_storm_level (compile): 18:23:04.012770 => 18:23:04.015122
+[0m18:23:04.015422 [debug] [Thread-1 (]: Began executing node model.space_pulse.int_solar_storm_level
+[0m18:23:04.018071 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_solar_storm_level: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_solar_storm_level"} */
+
+            
+
+    
+        create table `space_pulse_dev_intermediate`.`int_solar_storm_level__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/intermediate/int_solar_storm_level.sql
+
+WITH flares AS (
+    SELECT 
+        flare_id AS event_id,
+        'FLARE' AS event_type,
+        begin_time AS event_time,
+        flare_class AS raw_class,
+        
+        -- Asignamos un peso numérico según la letra de la llamarada
+        CASE flare_class_letter
+            WHEN 'X' THEN 5
+            WHEN 'M' THEN 4
+            WHEN 'C' THEN 3
+            WHEN 'B' THEN 2
+            ELSE 1
+        END AS severity_numeric,
+        
+        -- Asignamos la etiqueta de severidad para el Dashboard
+        CASE flare_class_letter
+            WHEN 'X' THEN 'CRITICAL'
+            WHEN 'M' THEN 'HIGH'
+            WHEN 'C' THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS severity_label
+        
+    FROM `space_pulse_dev_staging`.`stg_solar_flares`
+)
+
+SELECT 
+    *,
+    CAST(event_time AS Date) AS event_date
+FROM flares
+ORDER BY severity_numeric DESC, event_time DESC
+          )
+        ...
+[0m18:23:04.024574 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.027956 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_solar_storm_level: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_solar_storm_level"} */
+
+    select name, type from system.columns where table = 'int_solar_storm_level__dbt_backup'
+    
+      and database = 'space_pulse_dev_intermediate'
+    
+    order by position
+  ...
+[0m18:23:04.036547 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.039723 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.int_solar_storm_level"
+[0m18:23:04.041891 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_solar_storm_level: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_solar_storm_level"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_intermediate`.`int_solar_storm_level__dbt_backup`
+        ("event_id", "event_type", "event_time", "raw_class", "severity_numeric", "severity_label", "event_date")-- dbt/models/intermediate/int_solar_storm_level.sql
+
+WITH flares AS (
+    SELECT 
+        flare_id AS event_id,
+        'FLARE' AS event_type,
+        begin_time AS event_time,
+        flare_class AS raw_class,
+        
+        -- Asignamos un peso numérico según la letra de la llamarada
+        CASE flare_class_letter
+            WHEN 'X' THEN 5
+            WHEN 'M' THEN 4
+            WHEN 'C' THEN 3
+            WHEN 'B' THEN 2
+            ELSE 1
+        END AS severity_numeric,
+        
+        -- Asignamos la etiqueta de severidad para el Dashboard
+        CASE flare_class_letter
+            WHEN 'X' THEN 'CRITICAL'
+            WHEN 'M' THEN 'HIGH'
+            WHEN 'C' THEN 'MEDIUM'
+            ELSE 'LOW'
+        END AS severity_label
+        
+    FROM `space_pulse_dev_staging`.`stg_solar_flares`
+)
+
+SELECT 
+    *,
+    CAST(event_time AS Date) AS event_date
+FROM flares
+ORDER BY severity_numeric DESC, event_time DESC
+  
+  ...
+[0m18:23:04.148906 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.11 seconds
+[0m18:23:04.149998 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_solar_storm_level: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_solar_storm_level"} */
+EXCHANGE TABLES `space_pulse_dev_intermediate`.`int_solar_storm_level__dbt_backup` AND `space_pulse_dev_intermediate`.`int_solar_storm_level` 
+  
+  ...
+[0m18:23:04.151455 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.154040 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.int_solar_storm_level: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.int_solar_storm_level"} */
+
+    drop table if exists `space_pulse_dev_intermediate`.`int_solar_storm_level__dbt_backup` 
+  ...
+[0m18:23:04.160674 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.164869 [debug] [Thread-1 (]: Timing info for model.space_pulse.int_solar_storm_level (execute): 18:23:04.015553 => 18:23:04.164162
+[0m18:23:04.167172 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa679ca10>]}
+[0m18:23:04.169447 [info ] [Thread-1 (]: 11 of 14 OK created sql table model `space_pulse_dev_intermediate`.`int_solar_storm_level`  [[32mOK[0m in 0.16s]
+[0m18:23:04.170125 [debug] [Thread-1 (]: Finished running node model.space_pulse.int_solar_storm_level
+[0m18:23:04.170723 [debug] [Thread-1 (]: Began running node model.space_pulse.mart_neo_history
+[0m18:23:04.171337 [info ] [Thread-1 (]: 12 of 14 START sql table model `space_pulse_dev_marts`.`mart_neo_history` ...... [RUN]
+[0m18:23:04.172249 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.int_solar_storm_level, now model.space_pulse.mart_neo_history)
+[0m18:23:04.172554 [debug] [Thread-1 (]: Began compiling node model.space_pulse.mart_neo_history
+[0m18:23:04.175432 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.mart_neo_history"
+[0m18:23:04.177980 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_neo_history (compile): 18:23:04.172861 => 18:23:04.177773
+[0m18:23:04.178427 [debug] [Thread-1 (]: Began executing node model.space_pulse.mart_neo_history
+[0m18:23:04.182959 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_neo_history: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_neo_history"} */
+
+            
+
+    
+        create table `space_pulse_dev_marts`.`mart_neo_history__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/marts/mart_neo_history.sql
+-- Historial de asteroides con risk score para gráficos temporales
+
+
+
+SELECT
+    neo_id,
+    neo_name,
+    close_approach_date,
+    diameter_max_km,
+    velocity_km_s,
+    miss_distance_lunar,
+    miss_distance_km,
+    risk_score,
+    risk_level,
+    is_hazardous,
+    days_until_approach
+FROM `space_pulse_dev_intermediate`.`int_neo_risk_score`
+ORDER BY close_approach_date DESC
+          )
+        ...
+[0m18:23:04.194925 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.199829 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_neo_history: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_neo_history"} */
+
+    select name, type from system.columns where table = 'mart_neo_history__dbt_backup'
+    
+      and database = 'space_pulse_dev_marts'
+    
+    order by position
+  ...
+[0m18:23:04.202780 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.203997 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.mart_neo_history"
+[0m18:23:04.204870 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_neo_history: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_neo_history"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_marts`.`mart_neo_history__dbt_backup`
+        ("neo_id", "neo_name", "close_approach_date", "diameter_max_km", "velocity_km_s", "miss_distance_lunar", "miss_distance_km", "risk_score", "risk_level", "is_hazardous", "days_until_approach")-- dbt/models/marts/mart_neo_history.sql
+-- Historial de asteroides con risk score para gráficos temporales
+
+
+
+SELECT
+    neo_id,
+    neo_name,
+    close_approach_date,
+    diameter_max_km,
+    velocity_km_s,
+    miss_distance_lunar,
+    miss_distance_km,
+    risk_score,
+    risk_level,
+    is_hazardous,
+    days_until_approach
+FROM `space_pulse_dev_intermediate`.`int_neo_risk_score`
+ORDER BY close_approach_date DESC
+  
+  ...
+[0m18:23:04.212149 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.214340 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_neo_history: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_neo_history"} */
+EXCHANGE TABLES `space_pulse_dev_marts`.`mart_neo_history__dbt_backup` AND `space_pulse_dev_marts`.`mart_neo_history` 
+  
+  ...
+[0m18:23:04.216810 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.220499 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_neo_history: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_neo_history"} */
+
+    drop table if exists `space_pulse_dev_marts`.`mart_neo_history__dbt_backup` 
+  ...
+[0m18:23:04.221873 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.222811 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_neo_history (execute): 18:23:04.178843 => 18:23:04.222686
+[0m18:23:04.223343 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa72277d0>]}
+[0m18:23:04.223750 [info ] [Thread-1 (]: 12 of 14 OK created sql table model `space_pulse_dev_marts`.`mart_neo_history` . [[32mOK[0m in 0.05s]
+[0m18:23:04.224170 [debug] [Thread-1 (]: Finished running node model.space_pulse.mart_neo_history
+[0m18:23:04.224456 [debug] [Thread-1 (]: Began running node model.space_pulse.mart_space_alerts
+[0m18:23:04.224779 [info ] [Thread-1 (]: 13 of 14 START sql table model `space_pulse_dev_marts`.`mart_space_alerts` ..... [RUN]
+[0m18:23:04.225188 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.mart_neo_history, now model.space_pulse.mart_space_alerts)
+[0m18:23:04.225386 [debug] [Thread-1 (]: Began compiling node model.space_pulse.mart_space_alerts
+[0m18:23:04.227501 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.mart_space_alerts"
+[0m18:23:04.228229 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_space_alerts (compile): 18:23:04.225499 => 18:23:04.228102
+[0m18:23:04.228436 [debug] [Thread-1 (]: Began executing node model.space_pulse.mart_space_alerts
+[0m18:23:04.232253 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_space_alerts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_space_alerts"} */
+
+            
+
+    
+        create table `space_pulse_dev_marts`.`mart_space_alerts__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/marts/mart_space_alerts.sql
+
+
+
+-- 1. Alertas Solares (clase C para arriba, severidad >= 3)
+SELECT
+    concat('SOLAR-', event_id) AS alert_id,
+    'SOLAR_FLARE' AS alert_type,
+    event_time AS created_at,
+    severity_label AS severity,
+    severity_numeric AS severity_numeric,
+    concat('Solar flare class ', raw_class, ' detected.') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_solar_storm_level`
+WHERE severity_numeric >= 3
+
+UNION ALL
+
+-- 2. Alertas de Asteroides (nivel HIGH o CRITICAL)
+SELECT
+    concat('NEO-', neo_id, '-', toString(close_approach_date)) AS alert_id,
+    'NEAR_EARTH_OBJECT' AS alert_type,
+    CAST(close_approach_date AS DateTime) AS created_at,
+    risk_level AS severity,
+    CASE risk_level
+        WHEN 'CRITICAL' THEN 5
+        WHEN 'HIGH' THEN 4
+        WHEN 'MEDIUM' THEN 3
+        ELSE 1
+    END AS severity_numeric,
+    concat(neo_name, ' approaching at ', toString(round(miss_distance_lunar, 1)), ' lunar distances.') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_neo_risk_score`
+WHERE risk_level IN ('HIGH', 'CRITICAL')
+
+UNION ALL
+
+-- 3. Alertas de eventos terrestres (EONET)
+SELECT
+    concat('EARTH-', event_id) AS alert_id,
+    'EARTH_EVENT' AS alert_type,
+    event_date AS created_at,
+    severity_label AS severity,
+    severity_numeric AS severity_numeric,
+    concat(title, ' (', category, ')') AS description,
+    latitude,
+    longitude
+FROM `space_pulse_dev_intermediate`.`int_earth_event_severity`
+WHERE severity_numeric >= 3
+
+UNION ALL
+
+-- 4. Alertas de satélites anómalos
+SELECT
+    concat('SAT-', satellite_id, '-', formatDateTime(detected_at, '%Y%m%d%H%M%S')) AS alert_id,
+    'SATELLITE_ANOMALY' AS alert_type,
+    detected_at AS created_at,
+    'HIGH' AS severity,
+    4 AS severity_numeric,
+    concat('Orbital anomaly detected for satellite ', satellite_name, ' (', anomaly_type, ')') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_satellite_anomalies`
+
+-- Ordenamos por lo más reciente y peligroso
+ORDER BY created_at DESC, severity_numeric DESC
+          )
+        ...
+[0m18:23:04.238227 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.239968 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_space_alerts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_space_alerts"} */
+
+    select name, type from system.columns where table = 'mart_space_alerts__dbt_backup'
+    
+      and database = 'space_pulse_dev_marts'
+    
+    order by position
+  ...
+[0m18:23:04.242011 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.243154 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.mart_space_alerts"
+[0m18:23:04.244126 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_space_alerts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_space_alerts"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_marts`.`mart_space_alerts__dbt_backup`
+        ("alert_id", "alert_type", "created_at", "severity", "severity_numeric", "description", "latitude", "longitude")-- dbt/models/marts/mart_space_alerts.sql
+
+
+
+-- 1. Alertas Solares (clase C para arriba, severidad >= 3)
+SELECT
+    concat('SOLAR-', event_id) AS alert_id,
+    'SOLAR_FLARE' AS alert_type,
+    event_time AS created_at,
+    severity_label AS severity,
+    severity_numeric AS severity_numeric,
+    concat('Solar flare class ', raw_class, ' detected.') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_solar_storm_level`
+WHERE severity_numeric >= 3
+
+UNION ALL
+
+-- 2. Alertas de Asteroides (nivel HIGH o CRITICAL)
+SELECT
+    concat('NEO-', neo_id, '-', toString(close_approach_date)) AS alert_id,
+    'NEAR_EARTH_OBJECT' AS alert_type,
+    CAST(close_approach_date AS DateTime) AS created_at,
+    risk_level AS severity,
+    CASE risk_level
+        WHEN 'CRITICAL' THEN 5
+        WHEN 'HIGH' THEN 4
+        WHEN 'MEDIUM' THEN 3
+        ELSE 1
+    END AS severity_numeric,
+    concat(neo_name, ' approaching at ', toString(round(miss_distance_lunar, 1)), ' lunar distances.') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_neo_risk_score`
+WHERE risk_level IN ('HIGH', 'CRITICAL')
+
+UNION ALL
+
+-- 3. Alertas de eventos terrestres (EONET)
+SELECT
+    concat('EARTH-', event_id) AS alert_id,
+    'EARTH_EVENT' AS alert_type,
+    event_date AS created_at,
+    severity_label AS severity,
+    severity_numeric AS severity_numeric,
+    concat(title, ' (', category, ')') AS description,
+    latitude,
+    longitude
+FROM `space_pulse_dev_intermediate`.`int_earth_event_severity`
+WHERE severity_numeric >= 3
+
+UNION ALL
+
+-- 4. Alertas de satélites anómalos
+SELECT
+    concat('SAT-', satellite_id, '-', formatDateTime(detected_at, '%Y%m%d%H%M%S')) AS alert_id,
+    'SATELLITE_ANOMALY' AS alert_type,
+    detected_at AS created_at,
+    'HIGH' AS severity,
+    4 AS severity_numeric,
+    concat('Orbital anomaly detected for satellite ', satellite_name, ' (', anomaly_type, ')') AS description,
+    CAST(NULL AS Nullable(Float64)) AS latitude,
+    CAST(NULL AS Nullable(Float64)) AS longitude
+FROM `space_pulse_dev_intermediate`.`int_satellite_anomalies`
+
+-- Ordenamos por lo más reciente y peligroso
+ORDER BY created_at DESC, severity_numeric DESC
+  
+  ...
+[0m18:23:04.253318 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.254109 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_space_alerts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_space_alerts"} */
+EXCHANGE TABLES `space_pulse_dev_marts`.`mart_space_alerts__dbt_backup` AND `space_pulse_dev_marts`.`mart_space_alerts` 
+  
+  ...
+[0m18:23:04.255887 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.259123 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_space_alerts: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_space_alerts"} */
+
+    drop table if exists `space_pulse_dev_marts`.`mart_space_alerts__dbt_backup` 
+  ...
+[0m18:23:04.260562 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.261778 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_space_alerts (execute): 18:23:04.228572 => 18:23:04.261656
+[0m18:23:04.262260 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacae4590>]}
+[0m18:23:04.262665 [info ] [Thread-1 (]: 13 of 14 OK created sql table model `space_pulse_dev_marts`.`mart_space_alerts`  [[32mOK[0m in 0.04s]
+[0m18:23:04.263137 [debug] [Thread-1 (]: Finished running node model.space_pulse.mart_space_alerts
+[0m18:23:04.263874 [debug] [Thread-1 (]: Began running node model.space_pulse.mart_daily_summary
+[0m18:23:04.264220 [info ] [Thread-1 (]: 14 of 14 START sql table model `space_pulse_dev_marts`.`mart_daily_summary` .... [RUN]
+[0m18:23:04.264634 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.space_pulse.mart_space_alerts, now model.space_pulse.mart_daily_summary)
+[0m18:23:04.264843 [debug] [Thread-1 (]: Began compiling node model.space_pulse.mart_daily_summary
+[0m18:23:04.266650 [debug] [Thread-1 (]: Writing injected SQL for node "model.space_pulse.mart_daily_summary"
+[0m18:23:04.267458 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_daily_summary (compile): 18:23:04.264987 => 18:23:04.267307
+[0m18:23:04.267662 [debug] [Thread-1 (]: Began executing node model.space_pulse.mart_daily_summary
+[0m18:23:04.269839 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_daily_summary: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_daily_summary"} */
+
+            
+
+    
+        create table `space_pulse_dev_marts`.`mart_daily_summary__dbt_backup`
+        
+  
+        
+  engine = MergeTree()
+        
+      order by (tuple())
+        
+        
+        SETTINGS  replicated_deduplication_window=0
+
+            empty
+          as (
+            -- dbt/models/marts/mart_daily_summary.sql
+
+
+
+SELECT
+    today() AS summary_date,
+
+    -- Resumen Solar
+    countIf(alert_type = 'SOLAR_FLARE' AND created_at >= today() - INTERVAL 1 DAY) AS solar_alerts_24h,
+
+    -- Resumen NEOs (Asteroides)
+    countIf(alert_type = 'NEAR_EARTH_OBJECT') AS high_risk_neos_upcoming,
+
+    -- Resumen Eventos Terrestres
+    countIf(alert_type = 'EARTH_EVENT' AND created_at >= today() - INTERVAL 1 DAY) AS earth_events_24h,
+
+    -- Resumen Satélites
+    countIf(alert_type = 'SATELLITE_ANOMALY' AND created_at >= today() - INTERVAL 1 DAY) AS satellite_anomalies_24h,
+
+    -- Total
+    countIf(created_at >= today()) AS total_alerts_today,
+    countIf(severity = 'CRITICAL' AND created_at >= today()) AS critical_today,
+
+    -- Estado global del Sistema Solar
+    CASE
+        WHEN max(severity_numeric) >= 5 THEN 'CRITICAL'
+        WHEN max(severity_numeric) = 4 THEN 'HIGH'
+        WHEN max(severity_numeric) = 3 THEN 'ELEVATED'
+        ELSE 'NORMAL'
+    END AS system_status,
+
+    now() AS last_updated
+
+FROM `space_pulse_dev_marts`.`mart_space_alerts`
+          )
+        ...
+[0m18:23:04.274577 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.276048 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_daily_summary: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_daily_summary"} */
+
+    select name, type from system.columns where table = 'mart_daily_summary__dbt_backup'
+    
+      and database = 'space_pulse_dev_marts'
+    
+    order by position
+  ...
+[0m18:23:04.277989 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.280230 [debug] [Thread-1 (]: Writing runtime sql for node "model.space_pulse.mart_daily_summary"
+[0m18:23:04.281056 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_daily_summary: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_daily_summary"} */
+
+  
+    
+    
+    
+        
+        insert into `space_pulse_dev_marts`.`mart_daily_summary__dbt_backup`
+        ("summary_date", "solar_alerts_24h", "high_risk_neos_upcoming", "earth_events_24h", "satellite_anomalies_24h", "total_alerts_today", "critical_today", "system_status", "last_updated")-- dbt/models/marts/mart_daily_summary.sql
+
+
+
+SELECT
+    today() AS summary_date,
+
+    -- Resumen Solar
+    countIf(alert_type = 'SOLAR_FLARE' AND created_at >= today() - INTERVAL 1 DAY) AS solar_alerts_24h,
+
+    -- Resumen NEOs (Asteroides)
+    countIf(alert_type = 'NEAR_EARTH_OBJECT') AS high_risk_neos_upcoming,
+
+    -- Resumen Eventos Terrestres
+    countIf(alert_type = 'EARTH_EVENT' AND created_at >= today() - INTERVAL 1 DAY) AS earth_events_24h,
+
+    -- Resumen Satélites
+    countIf(alert_type = 'SATELLITE_ANOMALY' AND created_at >= today() - INTERVAL 1 DAY) AS satellite_anomalies_24h,
+
+    -- Total
+    countIf(created_at >= today()) AS total_alerts_today,
+    countIf(severity = 'CRITICAL' AND created_at >= today()) AS critical_today,
+
+    -- Estado global del Sistema Solar
+    CASE
+        WHEN max(severity_numeric) >= 5 THEN 'CRITICAL'
+        WHEN max(severity_numeric) = 4 THEN 'HIGH'
+        WHEN max(severity_numeric) = 3 THEN 'ELEVATED'
+        ELSE 'NORMAL'
+    END AS system_status,
+
+    now() AS last_updated
+
+FROM `space_pulse_dev_marts`.`mart_space_alerts`
+  
+  ...
+[0m18:23:04.293908 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.01 seconds
+[0m18:23:04.295159 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_daily_summary: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_daily_summary"} */
+EXCHANGE TABLES `space_pulse_dev_marts`.`mart_daily_summary__dbt_backup` AND `space_pulse_dev_marts`.`mart_daily_summary` 
+  
+  ...
+[0m18:23:04.296911 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.299725 [debug] [Thread-1 (]: dbt_clickhouse adapter: On model.space_pulse.mart_daily_summary: /* {"app": "dbt", "dbt_version": "1.7.19", "profile_name": "space_pulse_clickhouse", "target_name": "dev", "node_id": "model.space_pulse.mart_daily_summary"} */
+
+    drop table if exists `space_pulse_dev_marts`.`mart_daily_summary__dbt_backup` 
+  ...
+[0m18:23:04.301176 [debug] [Thread-1 (]: dbt_clickhouse adapter: SQL status: OK in 0.00 seconds
+[0m18:23:04.302702 [debug] [Thread-1 (]: Timing info for model.space_pulse.mart_daily_summary (execute): 18:23:04.267826 => 18:23:04.302545
+[0m18:23:04.303633 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '9410b714-f8b0-4e23-ad8b-c16ea09a3e2a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffa4db7dd0>]}
+[0m18:23:04.304565 [info ] [Thread-1 (]: 14 of 14 OK created sql table model `space_pulse_dev_marts`.`mart_daily_summary`  [[32mOK[0m in 0.04s]
+[0m18:23:04.305021 [debug] [Thread-1 (]: Finished running node model.space_pulse.mart_daily_summary
+[0m18:23:04.306431 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m18:23:04.306731 [debug] [MainThread]: Connection 'model.space_pulse.mart_daily_summary' was left open.
+[0m18:23:04.307001 [debug] [MainThread]: On model.space_pulse.mart_daily_summary: Close
+[0m18:23:04.307324 [info ] [MainThread]: 
+[0m18:23:04.307612 [info ] [MainThread]: Finished running 6 view models, 8 table models in 0 hours 0 minutes and 1.10 seconds (1.10s).
+[0m18:23:04.308663 [debug] [MainThread]: Command end result
+[0m18:23:04.340754 [info ] [MainThread]: 
+[0m18:23:04.341302 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m18:23:04.341773 [info ] [MainThread]: 
+[0m18:23:04.342262 [info ] [MainThread]: Done. PASS=14 WARN=0 ERROR=0 SKIP=0 TOTAL=14
+[0m18:23:04.343271 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 3.109565, "process_user_time": 4.202225, "process_kernel_time": 1.049759, "process_mem_max_rss": "123060", "process_out_blocks": "6165", "process_in_blocks": "0"}
+[0m18:23:04.343674 [debug] [MainThread]: Command `dbt run` succeeded at 18:23:04.343621 after 3.11 seconds
+[0m18:23:04.344122 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffacf03750>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffad1f4050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0xffffaceabfd0>]}
+[0m18:23:04.344425 [debug] [MainThread]: Flushing usage events

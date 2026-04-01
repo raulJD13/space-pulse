@@ -4,10 +4,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-    NASA_API_KEY: ${NASA_API_KEY}
+    NASA_API_KEY: ${NASA_API_KEY:-DEMO_KEY}
     MINIO_ENDPOINT: minio:9000
-    MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-    MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+    MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin123secure}
     KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     CLICKHOUSE_HOST: clickhouse
     _PIP_ADDITIONAL_REQUIREMENTS: "httpx minio confluent-kafka scikit-learn<1.6 numpy<2 scipy<1.14 joblib clickhouse-connect"
@@ -35,7 +35,9 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
+      timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   clickhouse:
     image: clickhouse/clickhouse-server:24.1
@@ -52,6 +54,10 @@ services:
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
       interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
   # -- STORAGE ---------------------------------------------------------
   minio:
@@ -67,7 +73,27 @@ services:
       - minio_data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin123secure}
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY} &&
+      mc mb --ignore-existing local/space-pulse-raw &&
+      echo 'Bucket space-pulse-raw ready'
+      "
+    restart: "no"
 
   # -- KAFKA -----------------------------------------------------------
   zookeeper:
@@ -76,6 +102,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     volumes:
       - zookeeper_data:/var/lib/zookeeper
+    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -91,6 +118,13 @@ services:
     depends_on: [zookeeper]
     volumes:
       - kafka_data:/var/lib/kafka
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:29092", "--list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -99,13 +133,23 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: space-pulse
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
-    depends_on: [kafka]
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: unless-stopped
 
   # -- AIRFLOW ---------------------------------------------------------
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
-    command: -c "airflow db migrate && airflow users create --username admin --password admin --firstname Space --lastname Pulse --role Admin --email admin@spacepulse.io"
+    command: >
+      -c "airflow db migrate &&
+          airflow users create
+            --username ${AIRFLOW_ADMIN_USER:-admin}
+            --password ${AIRFLOW_ADMIN_PASSWORD:-admin}
+            --firstname Space --lastname Pulse
+            --role Admin --email admin@spacepulse.io || true"
+    restart: "no"
 
   airflow-webserver:
     <<: *airflow-common
@@ -115,6 +159,7 @@ services:
     depends_on:
       airflow-init:
         condition: service_completed_successfully
+    restart: unless-stopped
 
   airflow-scheduler:
     <<: *airflow-common
@@ -122,6 +167,7 @@ services:
     depends_on:
       airflow-init:
         condition: service_completed_successfully
+    restart: unless-stopped
 
   # -- GRAFANA ---------------------------------------------------------
   grafana:
@@ -130,12 +176,31 @@ services:
       - "3000:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: spacepulse
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-spacepulse}
       GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
-    depends_on: [clickhouse]
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # -- DBT TRANSFORMATIONS (one-shot, for Grafana marts) ---------------
+  dbt:
+    build:
+      context: ./dbt
+      dockerfile: Dockerfile
+    working_dir: /dbt
+    volumes:
+      - ./dbt:/dbt
+    environment:
+      CLICKHOUSE_HOST: clickhouse
+    command: run --profiles-dir /dbt
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    restart: "no"
 
   # -- API BACKEND -----------------------------------------------------
   api:
@@ -148,11 +213,14 @@ services:
       CLICKHOUSE_HOST: clickhouse
       CLICKHOUSE_PORT: 8123
       CLICKHOUSE_DB: space_pulse
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
     depends_on:
       clickhouse:
         condition: service_healthy
     volumes:
       - ./api:/app/api
+    restart: unless-stopped
 
   # -- REACT FRONTEND --------------------------------------------------
   frontend:
@@ -163,9 +231,11 @@ services:
       - "5173:5173"
     environment:
       VITE_API_URL: http://localhost:8000
+      VITE_NASA_API_KEY: ${VITE_NASA_API_KEY:-DEMO_KEY}
     depends_on: [api]
     volumes:
       - ./frontend/src:/app/src
+    restart: unless-stopped
 
 volumes:
   postgres_data:
