@@ -1,511 +1,334 @@
 # Space Pulse
 
-**Space Pulse** es una plataforma de observabilidad del sistema solar en tiempo real. Ingesta datos de múltiples APIs públicas de la NASA, los almacena en un data lake, los transforma con un pipeline analítico y los presenta en un dashboard interactivo con alertas de amenazas espaciales.
-
-El proyecto implementa un flujo de datos **end-to-end de producción**: ingesta asíncrona → data lake (MinIO/S3) → motor analítico columnar (ClickHouse) → modelado ELT (dbt) → API REST (FastAPI) → dashboard (React) + observabilidad (Grafana) + streaming de alertas (Kafka).
+Space Pulse is a space threat monitoring platform that ingests data from seven NASA APIs, stores raw JSON in MinIO, writes structured records into ClickHouse, and serves them through a FastAPI backend consumed by a React dashboard. A separate dbt layer transforms raw tables into Grafana-ready marts.
 
 ---
 
-## Qué monitoriza
+## Architecture
 
-| Fuente de datos | API NASA | Descripción |
+```
+NASA APIs
+  NeoWs · DONKI · EONET · EPIC · InSight · TLE · APOD
+         │
+         ▼  (async httpx, retry, rate-limit)
+  Airflow DAGs  (6 scheduled pipelines)
+         │
+         ├──► MinIO  space-pulse-raw/  (raw JSON archive)
+         │
+         └──► ClickHouse  space_pulse.*  (raw typed tables)
+                    │
+                    ├──► FastAPI  /api/v1/*
+                    │         │
+                    │         └──► React dashboard  :5173
+                    │
+                    └──► dbt  space_pulse_dev_*
+                              │
+                              └──► Grafana  :3000
+```
+
+Kafka receives satellite anomaly alerts from the TLE pipeline but has no consumer in this codebase — it is available for downstream integrations.
+
+---
+
+## Data flow
+
+### 1. Ingestion (Airflow → MinIO + ClickHouse)
+
+Each DAG follows the same three-task pattern:
+
+```
+extract  →  save_to_minio  →  insert_to_clickhouse
+```
+
+The satellite pipeline adds two extra steps:
+
+```
+extract  →  compute_orbital_params  →  detect_anomalies
+         →  save_to_minio  +  alert_anomalies (Kafka)  +  insert_to_clickhouse
+```
+
+`insert_to_clickhouse` writes to both a domain table (`neo_daily`, `solar_events`, …) and `space_pulse.space_alerts` (the unified alert table the API reads from) in the same call via `ingestion/clickhouse_inserter.py`.
+
+### 2. Storage layout
+
+**MinIO** (`space-pulse-raw` bucket):
+
+| Path pattern | DAG |
+|---|---|
+| `neows/YYYY/MM/DD/HHMMSS.json` | near_earth_objects |
+| `donki/YYYY/MM/DD/HHMMSS.json` | solar_weather |
+| `eonet/YYYY/MM/DD/HHMMSS.json` | earth_events |
+| `epic/YYYY/MM/DD/images_metadata.json` | earth_events |
+| `insight/YYYY/MM/daily.json` | mars_weather |
+| `tle/YYYY/MM/DD/HHMMSS.json` | satellite_tle |
+| `apod/YYYY/MM/DD.json` | apod |
+
+**ClickHouse** (`space_pulse` database, created by `clickhouse/init.sql`):
+
+| Table | Engine | Populated by |
 |---|---|---|
-| Asteroides cercanos (NEO) | NeoWs | Diámetro, velocidad, distancia de acercamiento, riesgo de impacto |
-| Clima espacial | DONKI | Llamaradas solares, eyecciones de masa coronal (CME), tormentas geomagnéticas |
-| Eventos terrestres | EONET v3 | Incendios, volcanes, huracanes, inundaciones en tiempo real |
-| Imágenes de la Tierra | EPIC | Fotos de la Tierra completa desde el satélite DSCOVR (1.5M km) |
-| Clima en Marte | InSight | Temperatura, viento y presión atmosférica del rover InSight |
-| Satélites en órbita | TLE API | Posiciones orbitales de Starlink, ISS y satélites meteorológicos |
-| Imagen astronómica | APOD | Astronomy Picture of the Day con metadatos |
+| `neo_daily` | ReplacingMergeTree | NeoWs DAG |
+| `solar_events` | MergeTree (partitioned by month) | DONKI DAG |
+| `earth_events` | MergeTree (partitioned by month) | EONET DAG |
+| `epic_images` | ReplacingMergeTree | (schema only; EPIC metadata stays in MinIO) |
+| `mars_weather` | ReplacingMergeTree | InSight DAG |
+| `satellite_observations` | MergeTree (TTL 90 days) | TLE DAG |
+| `apod` | ReplacingMergeTree | APOD DAG |
+| `space_alerts` | MergeTree (TTL 365 days) | All DAGs (via clickhouse_inserter) |
+| `v_daily_summary` | VIEW over space_alerts | — |
+
+### 3. dbt transformations (for Grafana)
+
+dbt runs after ClickHouse is healthy (one-shot Docker service). It reads from the raw tables above and produces three schema layers:
+
+| Layer | Materialization | Schema prefix | Purpose |
+|---|---|---|---|
+| `staging/` | view | `space_pulse_dev_staging` | Type-clean columns, no logic |
+| `intermediate/` | table | `space_pulse_dev_intermediate` | Risk scores, severity levels |
+| `marts/` | incremental | `space_pulse_dev_marts` | Aggregated tables for Grafana |
+
+**Important:** the FastAPI backend reads exclusively from `space_pulse.*` raw tables, not the dbt marts. dbt output is used only by Grafana.
+
+### 4. Risk scoring
+
+NEO risk score: `(diameter_max_km³ × velocity_km_s) / max(miss_distance_lunar, 0.1)`
+
+| Level | Condition |
+|---|---|
+| CRITICAL | `is_hazardous = true` AND `miss_distance_lunar < 5` |
+| HIGH | `risk_score > 10` |
+| MEDIUM | `risk_score > 1` |
+| LOW | `risk_score ≤ 1` |
+
+The formula is implemented identically in `processing/parsers/neo_scorer.py` (called by the Airflow inserter at write time) and `dbt/models/intermediate/int_neo_risk_score.sql` (recalculated in the dbt layer for Grafana).
+
+Satellite anomaly detection uses Isolation Forest (`scikit-learn`) on four orbital features: altitude, inclination, orbital period, mean motion. Anomalous observations are flagged in `satellite_observations.is_anomalous` and published to the Kafka topic `space.alerts`.
 
 ---
 
-## Arquitectura
+## Services
 
+| Service | Port | Image / Source |
+|---|---|---|
+| `clickhouse` | 8123 (HTTP), 9009 (native) | `clickhouse/clickhouse-server:24.1` |
+| `postgres` | — (internal) | `postgres:15` (Airflow metadata only) |
+| `minio` | 9000 (API), 9001 (console) | `minio/minio:latest` |
+| `minio-init` | — | `minio/mc` — creates `space-pulse-raw` bucket (one-shot) |
+| `zookeeper` | — | `confluentinc/cp-zookeeper:7.5.0` |
+| `kafka` | 9092 | `confluentinc/cp-kafka:7.5.0` |
+| `kafka-ui` | 8090 | `provectuslabs/kafka-ui:latest` |
+| `airflow-init` | — | `apache/airflow:2.8.0-python3.11` — DB migrate + admin user (one-shot) |
+| `airflow-webserver` | 8080 | same image |
+| `airflow-scheduler` | — | same image |
+| `grafana` | 3000 | `grafana/grafana-oss:10.3.0` + clickhouse plugin |
+| `dbt` | — | `dbt/Dockerfile` — runs all 14 models (one-shot) |
+| `api` | 8000 | `api/Dockerfile` |
+| `frontend` | 5173 | `frontend/Dockerfile` |
+
+---
+
+## Running with Docker
+
+**Prerequisites:** Docker with Compose V2 (no other local dependencies required).
+
+```bash
+cp .env.example .env        # set NASA_API_KEY if you want real data
+docker compose up -d --build
 ```
-NASA APIs (NeoWs · DONKI · EONET · EPIC · InSight · TLE · APOD)
-        │
-        ▼
-  Airflow DAGs (6 pipelines programados)
-        │  async httpx · retry · rate-limit
-        ▼
-  MinIO / S3 Data Lake
-  space-pulse-raw/
-  ├── neows/YYYY/MM/DD/HHMMSS.json
-  ├── donki/YYYY/MM/DD/HHMMSS.json
-  ├── eonet/YYYY/MM/DD/HHMMSS.json
-  ├── epic/YYYY/MM/DD/HHMMSS.json
-  ├── mars/YYYY/MM/DD/HHMMSS.json
-  ├── satellites/YYYY/MM/DD/HHMMSS.json
-  └── apod/YYYY/MM/DD.json
-        │
-        ▼
-  ClickHouse (motor OLAP columnar)
-  ├── Tablas raw (cargadas por Airflow)
-  └── Vistas s3() para datos en MinIO
-        │
-        ▼
-  dbt (transformaciones ELT)
-  ├── staging/    → limpieza y normalización de campos
-  ├── intermediate/ → scoring de riesgo y clasificación
-  └── marts/      → tablas de negocio del dashboard
-        │
-        ├──────────────────────┐
-        ▼                      ▼
-  FastAPI REST API        Kafka Producer
-  /api/v1/alerts          topic: space.alerts
-  /api/v1/asteroids       (streaming de alertas)
-  /api/v1/solar
-  /api/v1/earth
-  /api/v1/mars
-  /api/v1/satellites
-        │
-        ├──────────────────────┐
-        ▼                      ▼
-  React Dashboard         Grafana
-  (Vite + Tailwind)       (dashboards SQL ClickHouse)
+
+All services start in dependency order. One-shot containers (`minio-init`, `dbt`, `airflow-init`) exit after completing their setup work.
+
+**Service URLs after startup:**
+
+| URL | What |
+|---|---|
+| http://localhost:5173 | React dashboard |
+| http://localhost:8000/docs | FastAPI interactive docs |
+| http://localhost:8080 | Airflow UI (admin / admin) |
+| http://localhost:9001 | MinIO console (minioadmin / minioadmin123secure) |
+| http://localhost:3000 | Grafana (admin / spacepulse) |
+| http://localhost:8090 | Kafka UI |
+
+**On first start the database is empty.** Trigger the Airflow DAGs manually from the Airflow UI to populate data, then re-run dbt if you want Grafana marts updated:
+
+```bash
+docker compose run --rm dbt run --profiles-dir /dbt
 ```
 
 ---
 
-## Stack tecnológico
+## Running locally (without Docker for API/frontend)
 
-### Orquestación e ingesta
-- **Apache Airflow 2.8** — 6 DAGs programados con retry automático
-- **Python 3.11** — clientes NASA asíncronos con `httpx`
-- **MinIO** — data lake S3-compatible para JSON crudo
+Infrastructure (ClickHouse, MinIO, Airflow, etc.) must still be running via Docker Compose.
 
-### Almacenamiento y modelado
-- **ClickHouse 24.1** — motor OLAP columnar para analítica en tiempo real
-- **dbt + dbt-clickhouse** — transformaciones ELT en 3 capas (staging / intermediate / marts)
+### API
 
-### Backend
-- **FastAPI** — API REST con 6 routers, Pydantic schemas, CORS configurado
-- **clickhouse-connect** — driver nativo Python para ClickHouse
+```bash
+pip install fastapi uvicorn clickhouse-connect httpx
 
-### Streaming
-- **Apache Kafka** (Confluent 7.5) — broker de mensajes para alertas en tiempo real
-- **kafka-python** — producer de eventos de anomalías
+# Adjust host if ClickHouse is not on localhost
+export CLICKHOUSE_HOST=localhost
+
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
 ### Frontend
-- **React 19** + **Vite 7** — dashboard con 7 componentes especializados
-- **TailwindCSS** — estilos dark-theme
-- **Recharts** — gráficas de distribución de riesgo y clima marciano
-- **Axios** — cliente HTTP con polling cada 5 minutos
 
-### Observabilidad
-- **Grafana 10.3** + plugin ClickHouse — dashboards SQL sobre los marts
+```bash
+cd frontend
+npm install --legacy-peer-deps   # react-simple-maps@3 has no React 19 peer decl
+npm run dev
+```
 
-### Infraestructura local
-- **Docker Compose** — orquesta 10+ servicios con un solo comando
-- **PostgreSQL 15** — base de datos de metadatos de Airflow
+`VITE_API_URL` defaults to `http://localhost:8000`. Set it in `.env` or as a shell variable to point elsewhere.
+
+### dbt
+
+```bash
+pip install dbt-core dbt-clickhouse
+
+cd dbt
+export CLICKHOUSE_HOST=localhost
+dbt run --profiles-dir .
+```
 
 ---
 
-## Servicios locales
+## DAG schedules
 
-| Servicio | URL | Credenciales |
+| DAG | Schedule | Source API |
 |---|---|---|
-| React Dashboard | http://localhost:5173 | — |
-| FastAPI (docs) | http://localhost:8000/docs | — |
-| Airflow UI | http://localhost:8080 | admin / admin |
-| Grafana | http://localhost:3000 | admin / spacepulse |
-| MinIO Console | http://localhost:9001 | minioadmin / minioadmin123secure |
-| ClickHouse Play | http://localhost:8123/play | default / (sin password) |
-| Kafka UI | http://localhost:8090 | — |
+| `apod_pipeline` | `5 0 * * *` (00:05 UTC daily) | NASA APOD |
+| `near_earth_objects_pipeline` | `0 6 * * *` (06:00 UTC daily) | NASA NeoWs |
+| `mars_weather_pipeline` | `0 8 * * *` (08:00 UTC daily) | NASA InSight |
+| `solar_weather_pipeline` | `*/30 * * * *` (every 30 min) | NASA DONKI |
+| `earth_events_pipeline` | `@hourly` | NASA EONET + EPIC |
+| `satellite_tle_pipeline` | `@hourly` | TLE API (Celestrak-compatible) |
+
+All DAGs have `catchup=False`, 2 retries, 5-minute retry delay.
 
 ---
 
-## Estructura del proyecto
+## API reference
+
+Base URL: `http://localhost:8000`
+
+### v1 endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/v1/alerts/` | Alerts from `space_pulse.space_alerts`. Params: `severity`, `alert_type`, `hours` (1–168, default 24), `limit` (max 200) |
+| GET | `/api/v1/alerts/summary` | Daily counts + system status derived from `space_alerts` |
+| GET | `/api/v1/solar/events` | Solar events (flares, CME, storms). Params: `hours`, `limit` |
+| GET | `/api/v1/solar/flares` | Flares only. Param: `limit` |
+| GET | `/api/v1/asteroids/` | NEOs ordered by risk score. Params: `risk_level`, `days_ahead` (1–30, default 7), `limit` |
+| GET | `/api/v1/asteroids/hazardous` | Potentially hazardous only, ordered by close approach date |
+| GET | `/api/v1/earth/events` | EONET natural events. Params: `category`, `status` (default `open`), `limit` |
+| GET | `/api/v1/earth/categories` | Event categories with counts |
+| GET | `/api/v1/mars/weather` | Mars weather history (up to 100 sols). Param: `limit` |
+| GET | `/api/v1/mars/weather/latest` | Most recent sol |
+| GET | `/api/v1/satellites/` | Satellite observations. Params: `anomalous_only`, `limit` |
+| GET | `/api/v1/satellites/anomalies` | Anomalous satellites only. Param: `hours` |
+| GET | `/api/v1/apod/` | Today's APOD (4-layer fallback; see below) |
+| GET | `/health` | `{"status":"ok"}` |
+
+Legacy aliases `/api/summary` and `/api/alerts` call the v1 handlers directly.
+
+### APOD resolution order
+
+1. In-memory cache (1-hour TTL, today's date only)
+2. ClickHouse — today's row inserted by Airflow
+3. NASA APOD API (direct call when today's row is not yet in DB)
+4. ClickHouse — most recent row (fallback on NASA rate-limit / error)
+
+The frontend (`spaceApi.js`) adds a second client-side in-memory cache with the same 1-hour TTL and deduplicates concurrent in-flight requests.
+
+---
+
+## Environment variables
+
+Copy `.env.example` to `.env`. Only `NASA_API_KEY` needs to change for real data; everything else has working defaults.
+
+| Variable | Default | Used by |
+|---|---|---|
+| `NASA_API_KEY` | `DEMO_KEY` | All Airflow DAGs + API APOD fallback |
+| `VITE_NASA_API_KEY` | `DEMO_KEY` | Browser (APOD direct calls if needed) |
+| `MINIO_ACCESS_KEY` | `minioadmin` | MinIO, Airflow DAGs |
+| `MINIO_SECRET_KEY` | `minioadmin123secure` | MinIO, Airflow DAGs |
+| `CLICKHOUSE_HOST` | `clickhouse` (Docker) / `localhost` (local) | API, dbt, clickhouse_inserter |
+| `CLICKHOUSE_PORT` | `8123` | API |
+| `CLICKHOUSE_USER` | `default` | API |
+| `CLICKHOUSE_PASSWORD` | _(empty)_ | API |
+| `KAFKA_BOOTSTRAP_SERVERS` | `kafka:29092` (Docker) | TLE DAG |
+| `AIRFLOW_ADMIN_USER` | `admin` | airflow-init |
+| `AIRFLOW_ADMIN_PASSWORD` | `admin` | airflow-init |
+| `GRAFANA_ADMIN_PASSWORD` | `spacepulse` | Grafana |
+| `VITE_API_URL` | `http://localhost:8000` | Frontend |
+
+---
+
+## Directory structure
 
 ```
 space-pulse/
 ├── airflow/
-│   └── dags/
-│       ├── dag_near_earth_objects.py   # NEOs — diario 06:00 UTC
-│       ├── dag_solar_weather.py        # CME/flares/storms — cada 30 min
-│       ├── dag_apod.py                 # Imagen astronómica — diario 00:05 UTC
-│       ├── dag_earth_events.py         # EONET + EPIC — cada hora
-│       ├── dag_mars_weather.py         # InSight — diario 08:00 UTC
-│       └── dag_satellites_tle.py       # TLE + anomalías — cada hora
-│
+│   └── dags/                   # 6 Airflow DAGs (one per data source)
 ├── ingestion/
-│   ├── clients/
-│   │   ├── base_client.py              # Base async con retry y rate-limit
-│   │   ├── neows_client.py             # Near Earth Objects
-│   │   ├── donki_client.py             # Space weather (DONKI)
-│   │   ├── apod_client.py              # Astronomy Picture of the Day
-│   │   ├── eonet_client.py             # Earth natural events
-│   │   ├── epic_client.py              # Earth imagery (DSCOVR)
-│   │   ├── insight_client.py           # Mars weather (InSight)
-│   │   └── tle_client.py               # Satellite orbital data + SGP4
-│   ├── minio_storage.py                # Wrapper S3/MinIO
-│   └── kafka_producer.py               # Producer de alertas a Kafka
-│
+│   ├── clients/                # Async httpx clients for each NASA API
+│   ├── clickhouse_inserter.py  # Shared insert helpers; writes raw tables + space_alerts
+│   ├── minio_storage.py        # MinIO put/get/list wrapper
+│   └── kafka_producer.py       # Confluent Kafka producer (lazy-init)
 ├── processing/
 │   ├── parsers/
-│   │   ├── neo_scorer.py               # Risk score de asteroides (0-100)
-│   │   ├── storm_classifier.py         # Clasificación de tormentas solares
-│   │   └── tle_parser.py               # Parser TLE + cálculos orbitales
+│   │   ├── neo_scorer.py       # NeoRiskScorer (same formula as dbt int_neo_risk_score)
+│   │   ├── storm_classifier.py # DONKI storm severity mapping
+│   │   └── tle_parser.py       # TLE orbital parameter parser
 │   └── anomaly/
-│       └── satellite_anomaly.py        # Detección de anomalías (Isolation Forest)
-│
-├── dbt/
-│   ├── dbt_project.yml
-│   ├── profiles.yml
-│   └── models/
-│       ├── staging/
-│       │   ├── stg_near_earth_objects.sql
-│       │   ├── stg_solar_flares.sql
-│       │   ├── stg_apod.sql
-│       │   ├── stg_earth_events.sql
-│       │   ├── stg_mars_weather.sql
-│       │   └── stg_satellites_tle.sql
-│       ├── intermediate/
-│       │   ├── int_neo_risk_score.sql       # Score de riesgo NEO (miss distance × velocidad × diámetro)
-│       │   ├── int_solar_storm_level.sql    # Clasificación C/M/X → LOW/MEDIUM/HIGH/CRITICAL
-│       │   ├── int_earth_event_severity.sql # Severidad de eventos EONET por categoría
-│       │   └── int_satellite_anomalies.sql  # Anomalías orbitales detectadas
-│       └── marts/
-│           ├── mart_space_alerts.sql    # Tabla unificada de alertas (todos los tipos)
-│           ├── mart_daily_summary.sql   # KPIs del día para los widgets del header
-│           ├── mart_neo_history.sql     # Historial de aproximaciones de asteroides
-│           └── mart_mars_climate.sql    # Serie temporal del clima marciano
-│
+│       └── satellite_anomaly.py # Isolation Forest anomaly detector
 ├── api/
-│   ├── main.py                          # FastAPI app + CORS + routers + rutas compat
-│   ├── db/
-│   │   └── clickhouse.py               # Cliente ClickHouse con manejo de errores
-│   ├── models/
-│   │   └── schemas.py                  # Pydantic response models
-│   ├── routers/
-│   │   ├── alerts.py                   # GET /api/v1/alerts/ y /alerts/summary
-│   │   ├── asteroids.py                # GET /api/v1/asteroids/ y /hazardous
-│   │   ├── solar.py                    # GET /api/v1/solar/events y /flares
-│   │   ├── earth.py                    # GET /api/v1/earth/events y /categories
-│   │   ├── mars.py                     # GET /api/v1/mars/weather y /latest
-│   │   └── satellites.py               # GET /api/v1/satellites/ y /anomalies
+│   ├── main.py                 # FastAPI app, CORS, router registration
+│   ├── routers/                # alerts, solar, asteroids, earth, mars, satellites, apod
+│   ├── models/                 # Pydantic response models
+│   ├── db/clickhouse.py        # get_client() + execute_query() helpers
 │   └── Dockerfile
-│
+├── dbt/
+│   ├── profiles.yml            # ClickHouse connection (host from CLICKHOUSE_HOST env var)
+│   ├── dbt_project.yml         # Materialization config per layer
+│   ├── models/
+│   │   ├── staging/            # Views; clean raw columns
+│   │   ├── intermediate/       # Tables; risk scores, severity classification
+│   │   └── marts/              # Incremental tables consumed by Grafana
+│   └── Dockerfile
+├── clickhouse/
+│   └── init.sql                # Creates space_pulse database, all raw tables, v_daily_summary view
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx                     # Layout principal del dashboard
-│   │   ├── hooks/useSpacePulse.js      # Hook central con polling y estado global
-│   │   ├── api/spaceApi.js             # Clientes Axios (v1 + compat)
-│   │   └── components/
-│   │       ├── Header/                 # KPIs: estado, alertas 24h, NEOs
-│   │       ├── SolarStatus/            # Últimas llamaradas y tormentas solares
-│   │       ├── NeoTracker/             # Tabla de asteroides próximos con risk score
-│   │       ├── EarthGlobe/             # Mapa de eventos naturales EONET
-│   │       ├── MarsWeather/            # Clima marciano (temperatura, presión, viento)
-│   │       ├── SatelliteAlert/         # Satélites con anomalías orbitales
-│   │       └── APOD/                   # Imagen astronómica del día
+│   │   ├── api/spaceApi.js     # Axios v1 client + APOD cache/dedup
+│   │   └── [components]        # App, Header, EarthGlobe, APOD, SolarStatus, …
+│   ├── vite.config.js
 │   └── Dockerfile
-│
-├── clickhouse/
-│   └── init.sql                        # Schema completo: 7 tablas + vista unificada
-│
-├── grafana/
-│   └── provisioning/
-│       ├── dashboards/dashboard.yml
-│       └── datasources/clickhouse.yml
-│
-├── scripts/
-│   └── test_nasa_api.py                # Test manual de ingesta a MinIO
-│
-├── docker-compose.yml                  # 10 servicios: infra + Airflow + Kafka + Grafana + API + Frontend
-├── .env.example                        # Plantilla de variables de entorno
-└── CLAUDE.md                           # Guía para Claude Code
+├── grafana/provisioning/       # Grafana datasource + dashboard provisioning
+├── docker-compose.yml
+├── .env.example
+└── .dockerignore
 ```
 
 ---
 
-## Flujo de datos completo
+## Known limitations
 
-### 1. Ingesta (Airflow DAGs)
+- **Mars data is static.** The InSight lander mission ended December 2022. The DAG runs daily but the API returns only historical sols; no new data will appear.
 
-Cada DAG ejecuta un cliente NASA asíncrono con retry y exponential backoff, y escribe el JSON crudo en MinIO particionado por fecha:
+- **EPIC images are not in ClickHouse.** The `earth_events_pipeline` fetches EPIC image metadata and saves it to MinIO, but does not insert it into the `epic_images` table. The `epic_images` schema exists in `init.sql` but is empty.
 
-```
-DAG near_earth_objects_pipeline  →  neows/YYYY/MM/DD/HHMMSS.json    (diario, 06:00 UTC)
-DAG solar_weather_pipeline       →  donki/YYYY/MM/DD/HHMMSS.json    (cada 30 min)
-DAG apod_pipeline                →  apod/YYYY/MM/DD.json            (diario, 00:05 UTC)
-DAG earth_events_pipeline        →  eonet + epic / ...              (cada hora)
-DAG mars_weather_pipeline        →  mars/YYYY/MM/DD/HHMMSS.json     (diario, 08:00 UTC)
-DAG satellite_tle_pipeline       →  satellites/YYYY/MM/DD/...       (cada hora)
-```
+- **API has no connection pooling.** `api/db/clickhouse.py` creates a new ClickHouse client on every request.
 
-El DAG de satélites incluye un paso extra de **detección de anomalías** con Isolation Forest (scikit-learn) sobre features orbitales: altitud, inclinación, período y excentricidad.
+- **CORS origins are hardcoded** to `http://localhost:5173` and `http://localhost:3000`. Requests from other origins will be rejected.
 
-### 2. Modelado dbt (3 capas)
+- **dbt marts are not used by the API.** The API reads from `space_pulse.*` raw tables. dbt output (`space_pulse_dev_*`) is intended for Grafana only. If you skip running dbt, the dashboard still works; Grafana panels will be empty.
 
-**Staging** — vistas, limpieza de campos y parsing de tipos:
-- Normaliza nombres de columnas, castea tipos, elimina registros inválidos
+- **The TLE source API can be unavailable.** The satellite DAG catches `httpx` errors and returns an empty list, so a failed TLE fetch causes the run to succeed with zero observations rather than failing.
 
-**Intermediate** — tablas con lógica de negocio:
-- `int_neo_risk_score`: computa un score 0-100 combinando distancia de acercamiento (en unidades lunares), velocidad relativa y diámetro máximo. Risk level: LOW / MEDIUM / HIGH / CRITICAL.
-- `int_solar_storm_level`: mapea la clase Geoalert (C1–C9, M1–M9, X1+) a un nivel de severidad numérico 1-5.
-- `int_earth_event_severity`: asigna severidad a eventos EONET por categoría (wildfires → HIGH, volcanoes → CRITICAL, etc.)
-- `int_satellite_anomalies`: filtra satélites marcados como anómalos por el detector de Isolation Forest.
+- **`DEMO_KEY` rate limits.** Using the default NASA API key allows ~30 requests/hour. High-frequency DAGs (solar at 30 min, earth/satellite at 1 hr) will hit rate limits quickly. Register a free key at https://api.nasa.gov.
 
-**Marts** — tablas incrementales para el dashboard:
-- `mart_space_alerts`: tabla unificada con todos los tipos de alerta (solar, NEO, terrestre, satélite) con severity y descripción.
-- `mart_daily_summary`: KPIs agregados: total alertas, alertas por tipo, estado global del sistema.
-- `mart_neo_history`: historial de aproximaciones de asteroides para gráfica de tendencias.
-- `mart_mars_climate`: serie temporal del clima marciano por sol (día marciano).
-
-### 3. API REST (FastAPI)
-
-Base URL: `http://localhost:8000`
-
-| Endpoint | Descripción |
-|---|---|
-| `GET /health` | Healthcheck |
-| `GET /api/v1/alerts/` | Alertas unificadas filtradas por `hours`, `severity`, `alert_type` |
-| `GET /api/v1/alerts/summary` | KPIs del día (system_status, solar_alerts_24h, high_risk_neos...) |
-| `GET /api/v1/asteroids/` | NEOs con risk score, filtro por `days_ahead` y `risk_level` |
-| `GET /api/v1/asteroids/hazardous` | Solo asteroides potencialmente peligrosos |
-| `GET /api/v1/solar/events` | Eventos solares por `hours` |
-| `GET /api/v1/solar/flares` | Solo llamaradas solares |
-| `GET /api/v1/earth/events` | Eventos naturales EONET por `category` y `status` |
-| `GET /api/v1/earth/categories` | Conteo de eventos activos por categoría |
-| `GET /api/v1/mars/weather` | Serie temporal del clima marciano |
-| `GET /api/v1/mars/weather/latest` | Último registro del rover InSight |
-| `GET /api/v1/satellites/` | Observaciones de satélites, con filtro `anomalous_only` |
-| `GET /api/v1/satellites/anomalies` | Anomalías orbitales de las últimas N horas |
-| `GET /api/summary` | Ruta de compatibilidad (equivale a `/api/v1/alerts/summary`) |
-| `GET /api/alerts` | Ruta de compatibilidad (equivale a `/api/v1/alerts/`) |
-
-La documentación interactiva Swagger está disponible en `http://localhost:8000/docs`.
-
-### 4. Dashboard (React)
-
-El hook `useSpacePulse` realiza todas las peticiones en paralelo al arrancar y refresca cada 5 minutos (`VITE_POLL_INTERVAL_MS`). Los componentes son independientes: si un endpoint falla, el resto del dashboard sigue funcionando.
-
----
-
-## Puesta en marcha
-
-### Prerrequisitos
-
-- Docker + Docker Compose
-- Python 3.11+ con pip (para ejecutar dbt y la API en local si no usas Docker)
-- Node.js 20+ (solo si desarrollas el frontend fuera de Docker)
-- Una [NASA API Key](https://api.nasa.gov/) — puedes usar `DEMO_KEY` con límites bajos
-
-### 1. Variables de entorno
-
-Copia `.env.example` a `.env` y ajusta los valores:
-
-```bash
-cp .env.example .env
-```
-
-Mínimo imprescindible:
-
-```env
-NASA_API_KEY=TU_KEY_AQUI
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin123secure
-```
-
-### 2. Levantar toda la infraestructura
-
-```bash
-docker compose up -d
-```
-
-Esto arranca: Postgres, MinIO, ClickHouse, Airflow (init + webserver + scheduler), Zookeeper, Kafka, Kafka UI, Grafana, API y Frontend.
-
-Espera ~60 segundos a que Airflow inicialice. Puedes comprobar el estado con:
-
-```bash
-docker compose ps
-```
-
-### 3. Ejecutar los DAGs para generar datos
-
-Entra a Airflow en http://localhost:8080 (admin / admin):
-
-1. Activa los DAGs que quieras desde el toggle de la columna izquierda.
-2. Haz clic en el botón **Trigger DAG** (icono play) para ejecutarlos manualmente y generar datos inmediatamente.
-3. El DAG `solar_weather_pipeline` y `earth_events_pipeline` son los más rápidos en producir alertas.
-
-### 4. Ejecutar dbt para transformar los datos
-
-Si corres dbt en local (fuera de Docker):
-
-```bash
-pip install dbt-core dbt-clickhouse
-cd dbt
-dbt debug       # verifica la conexión a ClickHouse
-dbt run         # ejecuta todos los modelos
-dbt test        # verifica la integridad de los datos
-```
-
-Para ejecutar solo una capa:
-
-```bash
-dbt run --select staging
-dbt run --select intermediate
-dbt run --select marts
-```
-
-### 5. Acceder al dashboard
-
-El frontend ya está disponible en http://localhost:5173 si levantaste Docker Compose. Si quieres ejecutarlo en local:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## Desarrollo en local (sin Docker para API y frontend)
-
-Si prefieres desarrollar la API o el frontend fuera de Docker:
-
-```bash
-# Crear y activar virtualenv
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
-
-# Instalar dependencias
-pip install fastapi uvicorn clickhouse-connect minio httpx python-dotenv kafka-python
-
-# Arrancar la API con hot-reload
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-```bash
-# Frontend
-cd frontend
-npm install
-npm run dev       # http://localhost:5173
-npm run build     # Build de producción
-```
-
----
-
-## Modelos dbt: capas y materialización
-
-| Capa | Materialización | Esquema ClickHouse |
-|---|---|---|
-| staging | view (no persiste datos) | `space_pulse_dev_staging` |
-| intermediate | table (recalculada completa en cada `dbt run`) | `space_pulse_dev_intermediate` |
-| marts | incremental (solo añade filas nuevas) | `space_pulse_dev_marts` |
-
-La `unique_key` de los marts es `id`, lo que permite actualizaciones idempotentes.
-
----
-
-## Detección de anomalías en satélites
-
-El módulo `processing/anomaly/satellite_anomaly.py` implementa un detector no supervisado con **Isolation Forest** (scikit-learn):
-
-- **Features**: `altitude_km`, `inclination_deg`, `period_minutes`, `mean_motion_rev_day`, `eccentricity`
-- **Contaminación**: 5% de la muestra se asume anómala por defecto
-- **Output**: `anomaly_score` (0–1, menor = más anómalo) y flag `is_anomalous`
-- El DAG de satélites ejecuta detección en cada batch horario antes de escribir a MinIO
-
----
-
-## Troubleshooting
-
-### El frontend no muestra datos
-
-1. Comprueba que la API responde: `curl http://localhost:8000/health`
-2. Verifica que hay datos en ClickHouse:
-   ```sql
-   SELECT count() FROM space_pulse_dev_marts.mart_space_alerts;
-   ```
-   desde http://localhost:8123/play
-3. Si los marts están vacíos, activa y ejecuta los DAGs en Airflow y luego corre `dbt run`.
-4. Comprueba la consola del navegador (F12) para ver errores de red/CORS.
-
-### Los DAGs fallan en Airflow
-
-- Revisa los logs del task desde la UI de Airflow → DAG → Task Instance → Logs.
-- Los errores más comunes son rate-limit de NASA API (`DEMO_KEY` tiene 30 req/hora). Usa una API key registrada.
-- Verifica que MinIO está accesible: http://localhost:9001
-
-### Error de conexión a ClickHouse
-
-```bash
-export CLICKHOUSE_HOST=localhost
-export CLICKHOUSE_PORT=8123
-export CLICKHOUSE_USER=default
-export CLICKHOUSE_PASSWORD=
-```
-
-Comprueba que ClickHouse responde: `curl http://localhost:8123/ping`
-
-### `init.sql` no se ejecutó (base de datos `space_pulse` ausente)
-
-ClickHouse solo ejecuta los scripts de `/docker-entrypoint-initdb.d/` la primera vez que el volumen se crea. Si el volumen ya existía, ejecuta el SQL manualmente desde http://localhost:8123/play pegando el contenido de `clickhouse/init.sql`.
-
-### Límites de NASA API con `DEMO_KEY`
-
-- NeoWs: 30 req/hora, 50 req/día
-- DONKI: sin límite documentado pero recomiendan no abusar
-- Obtén una key gratuita en https://api.nasa.gov/ para evitar bloqueos
-
----
-
-## Variables de entorno completas
-
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `NASA_API_KEY` | API key de NASA | `DEMO_KEY` |
-| `MINIO_ACCESS_KEY` | Usuario de MinIO | `minioadmin` |
-| `MINIO_SECRET_KEY` | Password de MinIO | `minioadmin123secure` |
-| `CLICKHOUSE_HOST` | Host de ClickHouse | `localhost` |
-| `CLICKHOUSE_PORT` | Puerto HTTP de ClickHouse | `8123` |
-| `CLICKHOUSE_USER` | Usuario de ClickHouse | `default` |
-| `CLICKHOUSE_PASSWORD` | Password de ClickHouse | (vacío) |
-| `KAFKA_BOOTSTRAP_SERVERS` | Brokers de Kafka | `localhost:9092` |
-| `KAFKA_ALERTS_TOPIC` | Topic para alertas | `space.alerts` |
-| `VITE_API_URL` | URL de la API desde el frontend | `http://localhost:8000` |
-| `VITE_POLL_INTERVAL_MS` | Intervalo de refresco del dashboard | `300000` (5 min) |
-| `GRAFANA_ADMIN_PASSWORD` | Password de Grafana | `spacepulse` |
-
----
-
-## Licencia
-
-Pendiente de definir. Datos de NASA son de dominio público bajo la [NASA Open Data Policy](https://www.nasa.gov/open/).
-
-
-
-Redesign summary — 11 files, zero build errors.                                                                                                    
-                                                                                                                                                     
-  What changed                                                                                                                                       
-                                                                                                                                                     
-  Global                                                                                                                                           
-  - Deep space background (#020817) with fixed radial nebula gradients (purple, blue, cyan)
-  - .cosmic-card system — glassmorphism cards (blur, dark bg, subtle blue border → glow on hover)
-  - Custom scrollbar, glowing text utilities, staggered fade-in-up animations
-
-  StarField (new component)
-  - Canvas-based: 280 individually twinkling stars + periodic shooting stars with gradient trails
-  - Runs at 60fps via requestAnimationFrame, no external deps
-
-  APOD — promoted to full-width hero
-  - 60/40 split layout: large image left, content right
-  - 3D perspective tilt on mouse move (CSS rotateX/rotateY on perspective(1200px))
-  - Gradient glow border around the image, zoom on hover
-  - Skeleton loading state, video play overlay, "Watch video" link
-
-  Header
-  - SPACE PULSE in bold gradient (blue→cyan→violet) with glow
-  - Pulsing logo orb, blinking LIVE badge
-  - KPI cards each with their own accent color (amber/orange/cyan/violet)
-
-  Panel cards
-  - Solar: corona glow animation on Sun icon, refined chart tooltip
-  - NEO: hazardous rows highlighted, risk badges with matching colors
-  - Earth Events: SVG grid overlay with highlighted equator/prime meridian, OPERATIONAL badge, ripple rings on wildfires/volcanoes, rich tooltips
-  - Mars: rust/orange theme, 4-metric grid with icons, handles no-data state cleanly
-  - Satellites: violet theme, AnomalyBar component showing anomaly severity visually, green "all nominal" empty state
+- **No `requirements.txt`.** Python dependencies are managed per-Dockerfile (`api/Dockerfile`, `dbt/Dockerfile`) and via `_PIP_ADDITIONAL_REQUIREMENTS` for Airflow. There is no top-level lockfile.
