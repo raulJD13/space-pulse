@@ -332,3 +332,36 @@ space-pulse/
 - **`DEMO_KEY` rate limits.** Using the default NASA API key allows ~30 requests/hour. High-frequency DAGs (solar at 30 min, earth/satellite at 1 hr) will hit rate limits quickly. Register a free key at https://api.nasa.gov.
 
 - **No `requirements.txt`.** Python dependencies are managed per-Dockerfile (`api/Dockerfile`, `dbt/Dockerfile`) and via `_PIP_ADDITIONAL_REQUIREMENTS` for Airflow. There is no top-level lockfile.
+
+## Contributing
+
+1. Fork the repo
+2. Create a branch: `git checkout -b feat/new-feature`
+3. Run tests/lint before opening a PR
+4. Open a Pull Request with a clear description and screenshots if applicable
+
+---
+
+## License
+
+MIT.
+
+---
+
+## Author
+
+Raul Jimenez
+Contact: `raul.jimenez.del@gmail.com` 
+linkedin: https://www.linkedin.com/in/rauljimenezdelgado/
+---
+
+## Note
+
+With a single command you can spin up a complete, containerized data platform:
+
+* Kafka (event bus)
+* Spark (distributed processing)
+* MinIO (S3-compatible lakehouse storage)
+* Producer (real-time ingestion)
+* Streaming ETL job
+* Analytics dashboard
